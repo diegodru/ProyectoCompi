@@ -2,12 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Core
 {
-    public static class EnvironmentManager
-    {
+    public static class EnvironmentManager {
         private static List<Environment> _contexts = new List<Environment>();
         private static List<Environment> _interpretContexts = new List<Environment>();
         private static int _currentIndex = -1;

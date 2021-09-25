@@ -8,9 +8,12 @@ namespace Core
     LeftParens,
     RightParens,
     SemiColon,
-    Equals,
+    Equal,
     LessThan,
     LessThanOrEqual,
+    GreaterThan,
+    GreaterThanOrEqual,
+    NotEqual,
     Identifier, //<--- este si papa
     IntConstant,
     FloatConstant,

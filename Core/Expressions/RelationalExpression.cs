@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Compilador.Core.Expressions
+namespace Core.Expressions
 {
   public class RelationalExpression : TypedBinaryOperator
   {
@@ -13,23 +13,24 @@ namespace Compilador.Core.Expressions
     {
       _typeRules = new Dictionary<(Type, Type), Type>
       {
-        fasd
         //pendiente
-        { (Type.Float, Type.Float), Type.Float },
-        { (Type.Int, Type.Int), Type.Int },
-        { (Type.String, Type.String), Type.String },
-        { (Type.Int, Type.Float), Type.Float },
-        { (Type.Float, Type.Int), Type.Float },
+        { (Type.Float, Type.Float), Type.Bool },
+        { (Type.Int, Type.Int), Type.Bool },
+        { (Type.String, Type.String), Type.Bool },
+        { (Type.Int, Type.Float), Type.Bool },
+        { (Type.Float, Type.Int), Type.Bool },
       };
     }
     public override dynamic Evaluate()
     {
       return Token.TokenType switch
       {
-        TokenType.GreaterThan => left.Evaluate() > right.Evaluate(),
-        TokenType.LessThan => left.Evaluate() < right.Evaluate(),
-        TokenType.Equal => left.Evaluate() == right.Evaluate(),
-        TokenType.NotEqual => left.Evaluate() != right.Evaluate(),
+        TokenType.GreaterThan => $"{left.Evaluate()} > {right.Evaluate()}",
+        TokenType.GreaterThanOrEqual => $"{left.Evaluate()} >= {right.Evaluate()}",
+        TokenType.LessThan => $"{left.Evaluate()} < {right.Evaluate()}",
+        TokenType.LessThanOrEqual => $"{left.Evaluate()} <= {right.Evaluate()}",
+        TokenType.Equal => $"{left.Evaluate()} == {right.Evaluate()}",
+        TokenType.NotEqual => $"{left.Evaluate()} != {right.Evaluate()}",
         _ => throw new NotImplementedException() // <----------- Throw not implmented
       };
     }
