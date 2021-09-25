@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DotNetWeb.Core.Expressions
+namespace Compilador.Core.Expressions
 {
   public class RelationalExpression : TypedBinaryOperator
   {
@@ -13,6 +13,7 @@ namespace DotNetWeb.Core.Expressions
     {
       _typeRules = new Dictionary<(Type, Type), Type>
       {
+        fasd
         //pendiente
         { (Type.Float, Type.Float), Type.Float },
         { (Type.Int, Type.Int), Type.Int },

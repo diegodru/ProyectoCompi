@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DotNetWeb.Core.Expressions
+namespace Core.Expressions
 {
   public abstract class Expression
   {

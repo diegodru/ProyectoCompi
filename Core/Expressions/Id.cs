@@ -1,4 +1,4 @@
-namespace DotNetWeb.Core.Expressions
+namespace Core.Expressions
 {
   public class Id : TypedExpression
   {
