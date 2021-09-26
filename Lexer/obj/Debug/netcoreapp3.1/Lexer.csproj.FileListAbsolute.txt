@@ -1,0 +1,3 @@
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Lexer/obj/Debug/netcoreapp3.1/Lexer.csprojAssemblyReference.cache
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Lexer/obj/Debug/netcoreapp3.1/Lexer.AssemblyInfoInputs.cache
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Lexer/obj/Debug/netcoreapp3.1/Lexer.AssemblyInfo.cs

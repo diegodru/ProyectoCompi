@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Compiler.Lexer
+namespace Lexer
 {
     public class Scanner : IScanner
     {

@@ -1,3 +1,8 @@
 /home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/obj/Debug/netcoreapp3.1/Core.csprojAssemblyReference.cache
 /home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/obj/Debug/netcoreapp3.1/Core.AssemblyInfoInputs.cache
 /home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/obj/Debug/netcoreapp3.1/Core.AssemblyInfo.cs
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/bin/Debug/netcoreapp3.1/Core.deps.json
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/bin/Debug/netcoreapp3.1/Core.dll
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/bin/Debug/netcoreapp3.1/Core.pdb
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/obj/Debug/netcoreapp3.1/Core.dll
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/obj/Debug/netcoreapp3.1/Core.pdb

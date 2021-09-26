@@ -1,0 +1,11 @@
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/bin/Debug/netcoreapp3.1/Parser.deps.json
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/bin/Debug/netcoreapp3.1/Parser.dll
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/bin/Debug/netcoreapp3.1/Parser.pdb
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/bin/Debug/netcoreapp3.1/Core.dll
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/bin/Debug/netcoreapp3.1/Core.pdb
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/obj/Debug/netcoreapp3.1/Parser.csprojAssemblyReference.cache
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/obj/Debug/netcoreapp3.1/Parser.AssemblyInfoInputs.cache
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/obj/Debug/netcoreapp3.1/Parser.AssemblyInfo.cs
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/obj/Debug/netcoreapp3.1/Parser.csproj.CopyComplete
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/obj/Debug/netcoreapp3.1/Parser.dll
+/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Parser/obj/Debug/netcoreapp3.1/Parser.pdb
