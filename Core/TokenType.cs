@@ -18,8 +18,9 @@ namespace Core
     Identifier, //<--- este si papa
     IntConstant,
     FloatConstant,
-    Assignation,
     StringConstant,
+    BoolConstant,
+    Assignation,
     EOF,
     OpenBrace,
     CloseBrace,
@@ -28,6 +29,7 @@ namespace Core
     IntKeyword,
     FloatKeyword,
     BoolKeyword,
+    StringKeyword,
     IfKeyword,
     ElseKeyword,
   }

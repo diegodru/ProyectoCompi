@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compilador.Lexer", "Compilador.Lexer\Compilador.Lexer.csproj", "{B01283C5-2688-4FFF-8700-C9E6214971AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexer", "Lexer\Lexer.csproj", "{B01283C5-2688-4FFF-8700-C9E6214971AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compilador.Console", "Compilador.Console\Compilador.Console.csproj", "{2831A156-1C2F-4ADC-9005-8162F7590EE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console", "Console\Console.csproj", "{2831A156-1C2F-4ADC-9005-8162F7590EE3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compilador.Parser", "Compilador.Parser\Compilador.Parser.csproj", "{D2CB367B-D104-4D34-92C8-A3F7B863C9D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parser", "Parser\Parser.csproj", "{D2CB367B-D104-4D34-92C8-A3F7B863C9D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compilador.Core", "Compilador.Core\Compilador.Core.csproj", "{61CDEC95-35ED-4B2B-8074-29691558FE12}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{61CDEC95-35ED-4B2B-8074-29691558FE12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

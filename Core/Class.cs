@@ -1,6 +1,6 @@
 namespace Core.Expressions
 {
-  public class Class : Expression
+  public class Class : Environment
   {
   }
 }

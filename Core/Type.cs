@@ -16,10 +16,10 @@ namespace Core
             TokenType = tokenType;
         }
 
-        public static Type Int => new Type("int", TokenType.BasicType);
-        public static Type Float => new Type("float", TokenType.BasicType);
-        public static Type Bool => new Type("bool", TokenType.BasicType);
-        public static Type String => new Type("string", TokenType.BasicType);
+        public static Type Int => new Type("int", TokenType.IntKeyword);
+        public static Type Float => new Type("float", TokenType.FloatKeyword);
+        public static Type Bool => new Type("bool", TokenType.BoolKeyword);
+        public static Type String => new Type("string", TokenType.StringKeyword);
 
         public bool Equals(Type other)
         {

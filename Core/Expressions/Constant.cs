@@ -13,6 +13,7 @@ namespace Core.Expressions
     {
       return Token.TokenType switch
       {
+          TokenType.BoolConstant => bool.Parse(Token.Lexeme),
           TokenType.IntConstant => Convert.ToInt32(Token.Lexeme),
           TokenType.FloatConstant => float.Parse(Token.Lexeme),
           TokenType.StringConstant => Token.Lexeme,

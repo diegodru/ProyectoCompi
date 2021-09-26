@@ -13,7 +13,7 @@ namespace Core.Expressions
     
     public override string Generate()
     {
-      return Evaluate().ToString();
+      return Token.Lexeme;
     }
 
     public override Type GetExpressionType()
