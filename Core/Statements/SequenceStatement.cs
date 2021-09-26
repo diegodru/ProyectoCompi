@@ -1,4 +1,5 @@
-﻿namespace Core.Statements
+﻿using System;
+namespace Core.Statements
 {
     public class SequenceStatement : Statement
     {

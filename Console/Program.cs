@@ -1,7 +1,8 @@
-﻿using DotNetWeb.Core;
-using DotNetWeb.Lexer;
+﻿using Core;
+using Lexer;
 using System;
 using System.IO;
+using test;
 
 namespace Console
 {
@@ -9,11 +10,12 @@ namespace Console
     {
         static void Main(string[] args)
         {
-            var code = File.ReadAllText("Code.txt").Replace(Environment.NewLine, "\n");
+            var code = File.ReadAllText("Code.txt");
             var input = new Input(code);
             var scanner = new Scanner(input);
-            var parser = new Parser.Parser(scanner);
-            parser.Parse();
+            var parser = new ElParser(scanner);
+            var engine = new CompilerEngine(parser);
+            engine.Run();
         }
     }
 }

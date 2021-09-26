@@ -15,7 +15,7 @@ namespace Core.Statements
 
     public override string Generate()
     {
-      return $"if({Expression.Generate()})\n{{{Statement.Generate()}\n}}\n";
+      return $"if({Expression.Generate()})\n{{\n{Statement.Generate()}}}\n";
     }
 
     public override void Interpret() 

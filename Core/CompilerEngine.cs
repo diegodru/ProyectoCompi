@@ -15,11 +15,10 @@ namespace Core
             this.parser = parser;
         }
 
-        public void Run()
+        public async void Run()
         {
             var intermediateCode = this.parser.Parse();
-            StreamWriter sw = File.CreateText("output.js");
-            sw.Write(intermediateCode);
+            await File.WriteAllTextAsync("codigo.js", intermediateCode);
         }
     }
 }

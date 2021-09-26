@@ -5,23 +5,20 @@ namespace Core.Statements
 {
   public class ForStatement : Statement
   {
-    public ForStatement(TypedExpression expression, Statement loop, AssignationStatement assignation, TypedExpression check, AssignationStatement lastAssignation)
+    public ForStatement(AssignationStatement assignation, TypedExpression check, AssignationStatement lastAssignation, Statement loop)
     {
-      Expression = expression;
       Loop = loop;
       FirstAssignation = assignation;
       Check = check;
       LastAssignation = lastAssignation;
     }
-    public ForStatement(TypedExpression expression, Statement loop, TypedExpression check, AssignationStatement lastAssignation)
-    {
-      Expression = expression;
-      Loop = loop;
-      Check = check;
-      LastAssignation = lastAssignation;
-    }
+    //public ForStatement(Statement loop, TypedExpression check, AssignationStatement lastAssignation)
+    //{
+      //Loop = loop;
+      //Check = check;
+      //LastAssignation = lastAssignation;
+    //}
 
-    public TypedExpression Expression { get; }
     public TypedExpression Check { get; }
     public Statement Loop { get; }
     public AssignationStatement FirstAssignation { get; }
@@ -29,15 +26,15 @@ namespace Core.Statements
 
     public override string Generate()
     {
-      var code = $"for({FirstAssignation?.Generate()}; {Expression?.Generate()}; {LastAssignation?.Generate()}){{\n";
-      code += $"{Loop?.Generate()}\n}}\n";
+      var code = $"for({FirstAssignation?.Generate()}; {Check?.Generate()}; {LastAssignation?.Generate()}){{\n";
+      code += $"{Loop?.Generate()}\n}}";
       return code;
     }
 
     public override void Interpret()
     {
       FirstAssignation?.Interpret();
-      if(Expression == null)
+      if(Check == null)
       {
         while(true)
         {
@@ -47,7 +44,7 @@ namespace Core.Statements
       }
       else
       {
-        while(Expression.Evaluate())
+        while(Check.Evaluate())
         {
           Loop.Interpret();
           LastAssignation?.Interpret();
@@ -57,9 +54,9 @@ namespace Core.Statements
     
     public override void ValidateSemantic()
     {
-      if(Expression != null)
+      if(Check != null)
       {
-        if(Expression.GetExpressionType() != Type.Bool)
+        if(Check.GetExpressionType() != Type.Bool)
         {
           throw new ApplicationException("el for solo puede evaluar bools");
         }

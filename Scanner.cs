@@ -49,7 +49,6 @@ namespace Lexer
 
                     if (this.keywords.ContainsKey(lexeme.ToString()))
                     {
-                      Console.WriteLine(lexeme.ToString());
                         return new Token
                         {
                             TokenType = this.keywords[lexeme.ToString()],

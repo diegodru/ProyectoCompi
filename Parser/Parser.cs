@@ -5,14 +5,14 @@ using Core.Statements;
 using System;
 using Type = Core.Type;
 
-namespace Parser
+namespace test
 {
-  public class Parser : IParser
+  public class ElParser : IParser
   {
     private readonly IScanner scanner;
     private Token lookAhead;
 
-    public Parser(IScanner scanner)
+    public ElParser(IScanner scanner)
     {
       this.scanner = scanner;
       this.Move();
@@ -20,24 +20,27 @@ namespace Parser
 
     public string Parse()
     {
-      return Program();
+      return Program().Generate();
     }
 
-    private string Program()
+    private Statement Program()
     {
       var block = Block();
-      block.ValidateSemantic();
-      var code = block.Generate();
-      return code;
+      try{
+        block.ValidateSemantic();
+      }catch(Exception e)
+      {
+        Console.Error.WriteLine(e.Message);
+      }
+      return block;
     }
 
     private Statement Block()
     {
       EnvironmentManager.PushContext();
-      Decls();
-      var statements = Stmts();
+      var stmts = new SequenceStatement(Decls(), Stmts());
       EnvironmentManager.PopContext();
-      return statements;
+      return stmts;
     }
 
     private Statement Stmts()
@@ -51,37 +54,73 @@ namespace Parser
 
     private Statement Stmt()
     {
-      Expression expression;
-      Statement statement1, statement2;
-      switch (this.lookAhead.TokenType)
-      {
-        case TokenType.Identifier:
-          {
-            var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
-            Match(TokenType.Identifier);
-            if (this.lookAhead.TokenType == TokenType.Assignation)
+      try{
+        Expression expression;
+        Statement statement1, statement2;
+        switch (this.lookAhead.TokenType)
+        {
+          case TokenType.Identifier:
             {
-              return AssignStmt(symbol.Id);
+              var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+              Match(TokenType.Identifier);
+              if (this.lookAhead.TokenType == TokenType.Assignation)
+              {
+                var assStmt = AssignStmt(symbol.Id);
+                Match(TokenType.SemiColon);
+                return assStmt;
+              }
+              throw new ApplicationException("No se han implementado los metodos");
             }
-            throw new ApplicationException("No se han implementado los metodos");
-          }
-        case TokenType.IfKeyword:
-          {
-            Match(TokenType.IfKeyword);
-            Match(TokenType.LeftParens);
-            expression = Eq();
-            Match(TokenType.RightParens);
-            statement1 = Stmt();
-            if (this.lookAhead.TokenType != TokenType.ElseKeyword)
+          case TokenType.IfKeyword:
             {
-              return new IfStatement(expression as TypedExpression, statement1);
+              Match(TokenType.IfKeyword);
+              Match(TokenType.LeftParens);
+              expression = Eq();
+              Match(TokenType.RightParens);
+              if(this.lookAhead.TokenType == TokenType.OpenBrace){
+                Match(TokenType.OpenBrace);
+                statement1 = Block();
+                Match(TokenType.CloseBrace);
+              }
+              else
+                statement1 = Stmt();
+              if (this.lookAhead.TokenType != TokenType.ElseKeyword)
+              {
+                return new IfStatement(expression as TypedExpression, statement1);
+              }
+              Match(TokenType.ElseKeyword);
+              statement2 = Stmt();
+              return new ElseStatement(expression as TypedExpression, statement1, statement2);
             }
-            Match(TokenType.ElseKeyword);
-            statement2 = Stmt();
-            return new ElseStatement(expression as TypedExpression, statement1, statement2);
-          }
-        default:
-          return Block();
+          case TokenType.ForKeyword:
+            {
+              Match(TokenType.ForKeyword);
+              Match(TokenType.LeftParens);
+              var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+              Match(TokenType.Identifier);
+              var firstAssignation = AssignStmt(symbol.Id);
+              Match(TokenType.SemiColon);
+              var check = Eq();
+              Match(TokenType.SemiColon);
+              Match(TokenType.Identifier);
+              var lastAssignation = AssignStmt(symbol.Id);
+              Match(TokenType.RightParens);
+              Statement loop;
+              if(this.lookAhead.TokenType == TokenType.OpenBrace){
+                Match(TokenType.OpenBrace);
+                  loop = Block();
+                Match(TokenType.CloseBrace);
+              }
+              else
+                loop = Stmt();
+              return new ForStatement(firstAssignation as AssignationStatement, check as RelationalExpression, lastAssignation as AssignationStatement, loop); 
+            }
+          default:
+            return Block();
+        }
+      }catch(Exception e){
+        Console.Error.WriteLine(e.Message);
+        throw new ApplicationException("No se han implementado los metodos");
       }
     }
 
@@ -206,11 +245,10 @@ namespace Parser
     {
       Match(TokenType.Assignation);
       var expression = Eq();
-      Match(TokenType.SemiColon); 
       return new AssignationStatement(id, expression as TypedExpression);
     }
 
-    private void Decls()
+    private Statement Decls()
     {
       if (this.lookAhead.TokenType == TokenType.IntKeyword ||
           this.lookAhead.TokenType == TokenType.FloatKeyword ||
@@ -218,12 +256,12 @@ namespace Parser
           this.lookAhead.TokenType == TokenType.StringKeyword)
         //<------------ Class
       {
-        Decl();
-        Decls();
+        return new SequenceStatement(Decl(), Decls());
       }
+      return null;
     }
 
-    private void Decl()
+    private Statement Decl()
     {
       TokenType tokenType = this.lookAhead.TokenType;
       Match(tokenType);
@@ -247,6 +285,7 @@ namespace Parser
           break;
       }
       EnvironmentManager.AddVariable(token.Lexeme, id);
+      return new DeclarationStatement(id);
     }
 
     private void Move()

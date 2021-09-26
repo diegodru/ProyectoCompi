@@ -32,5 +32,6 @@ namespace Core
     StringKeyword,
     IfKeyword,
     ElseKeyword,
+    ForKeyword,
   }
 }

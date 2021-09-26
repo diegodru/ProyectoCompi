@@ -16,7 +16,7 @@ namespace Core.Statements
 
     public override string Generate()
     {
-      return $"{Id.Generate()} = {Expression.Generate()};\n";
+      return $"{Id.Generate()} = {Expression.Generate()}";
     }
 
     public override void Interpret()
