@@ -1,6 +1,6 @@
 using System;
 
-namespace DotNetWeb.Core.Expressions
+namespace Core.Expressions
 {
   public class Constant : TypedExpression
   {

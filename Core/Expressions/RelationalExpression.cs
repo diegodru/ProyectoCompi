@@ -25,19 +25,19 @@ namespace Core.Expressions
     {
       return Token.TokenType switch
       {
-        TokenType.GreaterThan => $"{left.Evaluate()} > {right.Evaluate()}",
-        TokenType.GreaterThanOrEqual => $"{left.Evaluate()} >= {right.Evaluate()}",
-        TokenType.LessThan => $"{left.Evaluate()} < {right.Evaluate()}",
-        TokenType.LessThanOrEqual => $"{left.Evaluate()} <= {right.Evaluate()}",
-        TokenType.Equal => $"{left.Evaluate()} == {right.Evaluate()}",
-        TokenType.NotEqual => $"{left.Evaluate()} != {right.Evaluate()}",
+        TokenType.GreaterThan => left.Evaluate() > right.Evaluate(),
+        TokenType.GreaterThanOrEqual => left.Evaluate() >= right.Evaluate(),
+        TokenType.LessThan => left.Evaluate() < right.Evaluate(),
+        TokenType.LessThanOrEqual => left.Evaluate() <= right.Evaluate(),
+        TokenType.Equal => left.Evaluate() == right.Evaluate(),
+        TokenType.NotEqual => left.Evaluate() != right.Evaluate(),
         _ => throw new NotImplementedException() // <----------- Throw not implmented
       };
     }
 
     public override string Generate()
     {
-      return Evaluate().ToString();
+      return $"{left.Generate()} {Token.Lexeme} {right.Generate()}";
     }
 
     public override Type GetExpressionType()

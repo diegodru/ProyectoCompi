@@ -5,6 +5,7 @@ namespace Core
     Asterisk,
     Plus,
     Minus,
+    Division,
     LeftParens,
     RightParens,
     SemiColon,
