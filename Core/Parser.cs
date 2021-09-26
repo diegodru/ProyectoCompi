@@ -18,17 +18,17 @@ namespace Parser
       this.Move();
     }
 
-    public Statement Parse()
+    public string Parse()
     {
       return Program();
     }
 
-    private Statement Program()
+    private string Program()
     {
       var block = Block();
       block.ValidateSemantic();
       var code = block.Generate();
-      return block;
+      return code;
     }
 
     private Statement Block()
@@ -63,7 +63,7 @@ namespace Parser
             {
               return AssignStmt(symbol.Id);
             }
-            return CallStmt(symbol);
+            throw new ApplicationException("No se han implementado los metodos");
           }
         case TokenType.IfKeyword:
           {
@@ -160,10 +160,10 @@ namespace Parser
           constant = new Constant(lookAhead, Type.String);
           Match(TokenType.StringConstant);
           return constant;
-        case TokenType.BoolConstant:
-          constant = new Constant(lookAhead, Type.Bool);
-          Match(TokenType.BoolConstant); //<------------ Implmentar //TODO
-          return constant;
+        //case TokenType.BoolConstant:
+          //constant = new Constant(lookAhead, Type.Bool);
+          //Match(TokenType.BoolConstant); //<------------ Implmentar //TODO
+          //return constant;
           //case NewKeyword
         default:
           var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
@@ -172,14 +172,14 @@ namespace Parser
       }
     }
 
-    private Statement CallStmt(Symbol symbol)
-    {
-      Match(TokenType.LeftParens);
-      var @params = OptParams();
-      Match(TokenType.RightParens);
-      Match(TokenType.SemiColon);
-      return new CallStatement(symbol.Id, @params, symbol.Attributes);
-    }
+    //private Statement CallStmt(Symbol symbol)
+    //{
+      //Match(TokenType.LeftParens);
+      //var @params = OptParams();
+      //Match(TokenType.RightParens);
+      //Match(TokenType.SemiColon);
+      //return new CallStatement(symbol.Id, @params, symbol.Attributes);
+    //}
 
     private Expression OptParams()
     {

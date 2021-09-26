@@ -4,6 +4,6 @@ namespace Core.Interfaces
 {
     public interface IParser
     {
-        Statement Parse();
+        string Parse();
     }
 }

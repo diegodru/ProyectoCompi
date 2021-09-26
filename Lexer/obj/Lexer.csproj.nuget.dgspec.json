@@ -1,0 +1,124 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Lexer/Lexer.csproj": {}
+  },
+  "projects": {
+    "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/Core.csproj",
+        "projectName": "Core",
+        "projectPath": "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/Core.csproj",
+        "packagesPath": "/home/diego/.nuget/packages/",
+        "outputPath": "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/diego/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.1.10, 3.1.10]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.1.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Lexer/Lexer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Lexer/Lexer.csproj",
+        "projectName": "Lexer",
+        "projectPath": "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Lexer/Lexer.csproj",
+        "packagesPath": "/home/diego/.nuget/packages/",
+        "outputPath": "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Lexer/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/diego/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {
+              "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/Core.csproj": {
+                "projectPath": "/home/diego/School/Unitec/Periodo8/Compi/proyecto/Compilador/Core/Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.1.10, 3.1.10]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.1.117/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

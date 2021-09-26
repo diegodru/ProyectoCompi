@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Compiler.Lexer
+namespace Lexer
 {
     public readonly struct Position
     {

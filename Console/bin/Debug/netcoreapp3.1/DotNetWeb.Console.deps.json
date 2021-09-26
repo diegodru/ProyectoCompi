@@ -1,0 +1,64 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "DotNetWeb.Console/1.0.0": {
+        "dependencies": {
+          "DotNetWeb.Core": "1.0.0",
+          "DotNetWeb.Lexer": "1.0.0",
+          "DotNetWeb.Parser": "1.0.0"
+        },
+        "runtime": {
+          "DotNetWeb.Console.dll": {}
+        }
+      },
+      "DotNetWeb.Core/1.0.0": {
+        "runtime": {
+          "DotNetWeb.Core.dll": {}
+        }
+      },
+      "DotNetWeb.Lexer/1.0.0": {
+        "dependencies": {
+          "DotNetWeb.Core": "1.0.0"
+        },
+        "runtime": {
+          "DotNetWeb.Lexer.dll": {}
+        }
+      },
+      "DotNetWeb.Parser/1.0.0": {
+        "dependencies": {
+          "DotNetWeb.Core": "1.0.0"
+        },
+        "runtime": {
+          "DotNetWeb.Parser.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DotNetWeb.Console/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DotNetWeb.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DotNetWeb.Lexer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DotNetWeb.Parser/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
