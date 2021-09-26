@@ -21,7 +21,7 @@ namespace Core.Statements
 
     public override string Generate()
     {
-      return $"let {Identifier.Generate()};\n";
+      return $"let {Identifier.Generate()}";
     }
   }
 }

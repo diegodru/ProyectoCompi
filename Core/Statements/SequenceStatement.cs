@@ -27,9 +27,14 @@ namespace Core.Statements
 
         public override string Generate()
         {
-            var code = FirstStatement?.Generate();
-            code += NextStatement?.Generate();
-            return code;
+          string newLine = "", newLine2 = "";
+          if(NextStatement != null)
+            newLine = "\n";
+          else if(FirstStatement != null)
+            newLine2 = "\n";
+          var code = FirstStatement?.Generate() + newLine;
+          code += NextStatement?.Generate() + newLine2;
+          return code;
         }
     }
 }

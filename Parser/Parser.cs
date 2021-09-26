@@ -69,6 +69,14 @@ namespace test
                 Match(TokenType.SemiColon);
                 return assStmt;
               }
+              else if (this.lookAhead.TokenType == TokenType.Increment || this.lookAhead.TokenType == TokenType.Decrement)
+              {
+                var type = this.lookAhead.TokenType;
+                Move();
+                var incdec = new IncDecStatement(symbol.Id, type);
+                Match(TokenType.SemiColon);
+                return incdec;
+              }
               throw new ApplicationException("No se han implementado los metodos");
             }
           case TokenType.IfKeyword:
@@ -102,8 +110,17 @@ namespace test
               Match(TokenType.SemiColon);
               var check = Eq();
               Match(TokenType.SemiColon);
+              symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
               Match(TokenType.Identifier);
-              var lastAssignation = AssignStmt(symbol.Id);
+              Statement last;
+              if(this.lookAhead.TokenType == TokenType.Assignation)
+                last = AssignStmt(symbol.Id);
+              else //if (this.lookAhead.TokenType == TokenType.Increment || this.lookAhead.TokenType == TokenType.Decrement)
+              {
+                var type = this.lookAhead.TokenType;
+                Move();
+                last = new IncDecStatement(symbol.Id, type);
+              }
               Match(TokenType.RightParens);
               Statement loop;
               if(this.lookAhead.TokenType == TokenType.OpenBrace){
@@ -113,7 +130,7 @@ namespace test
               }
               else
                 loop = Stmt();
-              return new ForStatement(firstAssignation as AssignationStatement, check as RelationalExpression, lastAssignation as AssignationStatement, loop); 
+              return new ForStatement(firstAssignation as AssignationStatement, check as TypedExpression, last, loop); 
             }
           default:
             return Block();
@@ -167,7 +184,7 @@ namespace test
     private Expression Term()
     {
       var expression = Factor();
-      while (this.lookAhead.TokenType == TokenType.Asterisk || this.lookAhead.TokenType == TokenType.Division)
+      while (this.lookAhead.TokenType == TokenType.Asterisk || this.lookAhead.TokenType == TokenType.Division || this.lookAhead.TokenType == TokenType.Modulus)
       {
         var token = lookAhead;
         Move();
@@ -199,10 +216,10 @@ namespace test
           constant = new Constant(lookAhead, Type.String);
           Match(TokenType.StringConstant);
           return constant;
-        //case TokenType.BoolConstant:
-          //constant = new Constant(lookAhead, Type.Bool);
-          //Match(TokenType.BoolConstant); //<------------ Implmentar //TODO
-          //return constant;
+        case TokenType.BoolConstant:
+          constant = new Constant(lookAhead, Type.Bool);
+          Match(TokenType.BoolConstant);
+          return constant;
           //case NewKeyword
         default:
           var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);

@@ -1,4 +1,7 @@
-let i;
-for(i = 5; i < 3; i = 3){
+let i
+
+i++
+for(i = 5; true; i++){
 i = 4
+i = 5
 }

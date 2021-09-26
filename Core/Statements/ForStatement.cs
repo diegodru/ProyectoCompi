@@ -5,7 +5,7 @@ namespace Core.Statements
 {
   public class ForStatement : Statement
   {
-    public ForStatement(AssignationStatement assignation, TypedExpression check, AssignationStatement lastAssignation, Statement loop)
+    public ForStatement(AssignationStatement assignation, TypedExpression check, Statement lastAssignation, Statement loop)
     {
       Loop = loop;
       FirstAssignation = assignation;
@@ -26,8 +26,8 @@ namespace Core.Statements
 
     public override string Generate()
     {
-      var code = $"for({FirstAssignation?.Generate()}; {Check?.Generate()}; {LastAssignation?.Generate()}){{\n";
-      code += $"{Loop?.Generate()}\n}}";
+      var code = $"for({FirstAssignation?.Generate()}; {Check?.Generate()}; {LastAssignation?.Generate()}){{";
+      code += $"{Loop?.Generate()}}}";
       return code;
     }
 

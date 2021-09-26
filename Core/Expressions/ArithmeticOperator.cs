@@ -29,6 +29,7 @@ namespace Core.Expressions
         TokenType.Minus => left.Evaluate() - right.Evaluate(),
         TokenType.Asterisk => left.Evaluate() * right.Evaluate(),
         TokenType.Division => left.Evaluate() / right.Evaluate(),
+        TokenType.Modulus => left.Evaluate() % right.Evaluate(),
         _ => throw new NotImplementedException()
       };
     }

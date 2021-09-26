@@ -13,7 +13,7 @@ namespace Core.Expressions
     {
       return Token.TokenType switch
       {
-          TokenType.BoolConstant => bool.Parse(Token.Lexeme),
+          TokenType.BoolConstant => Convert.ToBoolean(Token.Lexeme),
           TokenType.IntConstant => Convert.ToInt32(Token.Lexeme),
           TokenType.FloatConstant => float.Parse(Token.Lexeme),
           TokenType.StringConstant => Token.Lexeme,
@@ -23,7 +23,7 @@ namespace Core.Expressions
 
     public override string Generate()
     {
-      return Evaluate().ToString();
+      return Token.Lexeme;
     }
 
     public override Type GetExpressionType()
