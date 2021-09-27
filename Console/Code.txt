@@ -1,6 +1,12 @@
 class lol{
   int t;
   bool a;
+  lol bebe;
+  int test(int q){
+    this.t = q;
+    Console.WriteLine(q + this.t);
+    return this.t;
+  }
   lol(int i, bool hola, int adios){
     int j;
     j = 10;
@@ -12,13 +18,9 @@ class lol{
     }
   }
 
-  int test(int q){
-    this.t = q;
-    Console.WriteLine(q + this.t);
-    return this.t;
-  }
 }
 lol b;
+b.test(2);
 string a;
 DateTime z;
 z = new DateTime(5);

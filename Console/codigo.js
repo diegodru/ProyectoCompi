@@ -1,4 +1,12 @@
 class lol {
+test(q){
+
+this.t = q
+console.log(q +  this.t)
+
+
+return this.t
+}
 Constructor(i, hola, adios){
 let j
 
@@ -14,17 +22,11 @@ this.t = 20
 
 
 }
-test(q){
-
-this.t = q
-console.log(q +  this.t)
-
-
-return this.t
-}
 
 }
 let b
+
+b.test(2)
 let a
 let z
 
@@ -36,4 +38,5 @@ for(i = 5; (i < 5 && i != 0); --i){
 i = 4
 i--
 }
+
 

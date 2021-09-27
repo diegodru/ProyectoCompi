@@ -51,6 +51,20 @@ namespace Core
       return false;
     }
 
+    public static Symbol GetClass(string lexeme)
+    {
+      for(int i = _contexts.Count - 1; i >= 0; i--)
+      {
+        var context = _contexts[i];
+        var symbol = context.Get(lexeme);
+        if (symbol != null && symbol.SymbolType == SymbolType.Class)
+        {
+          return symbol;
+        }
+      }
+      throw new ApplicationException($"Symbol '{lexeme}' doesn't exist in current context");
+    }
+
     public static Symbol GetSymbol(string lexeme)
     {
       for(int i = _contexts.Count - 1; i >= 0; i--)
@@ -135,6 +149,7 @@ namespace Core
       }
       return method;
     }
+
 
     public virtual Class AddClass(string lexeme, Id id)
     {

@@ -112,6 +112,23 @@ namespace test
             {
               var symbol = ID();
               Match(TokenType.Identifier);
+              if (this.lookAhead.TokenType == TokenType.Period)
+              {
+                Match(TokenType.Period);
+                string methodname = this.lookAhead.Lexeme;
+                Class clase = EnvironmentManager.GetClass(symbol.Id.GetExpressionType().Lexeme).Value;
+                Symbol methodsymbol = clase.Get(methodname);
+                if(methodsymbol == null || methodsymbol.SymbolType != SymbolType.Method)
+                {
+                  throw new ApplicationException($"No existe el metodo '{methodname}' en la clase '{clase.Identifier.Generate()}'");
+                }
+                Match(TokenType.Identifier);
+                Match(TokenType.LeftParens);
+                var args = OptArguments();
+                Match(TokenType.RightParens);
+                Match(TokenType.SemiColon);
+                return new CallStatement(symbol, methodsymbol, args as ArgumentExpression);
+              }
               if (this.lookAhead.TokenType == TokenType.Assignation)
               {
                 Console.WriteLine(symbol.Id.Generate());
@@ -364,7 +381,13 @@ namespace test
                   return new DateTimeConstant(null, args as ArgumentExpression);
                 }
               default:
-                throw new NotImplementedException(""); //////<---------- Clases
+                var token = this.lookAhead;
+                Match(TokenType.Identifier);
+                if(!EnvironmentManager.ClassExists(token.Lexeme))
+                {
+                  throw new ApplicationException($"La clase {token.Lexeme} no existe");
+                }
+                Match(TokenType.LeftParens);
             }
           }
         default:
@@ -406,10 +429,15 @@ namespace test
           id = new Id(token, Type.Int);;
           break;
         default: //<-------- TokenType.Identifer
+          if(!EnvironmentManager.ClassExists(TypeToken.Lexeme))
+          {
+            throw new ApplicationException($"No existe el tipo {TypeToken.Lexeme}");
+          }
           id = new Id(token, new Type(TypeToken.Lexeme, TokenType.ClassType));
           break;
       }
-      EnvironmentManager.AddVariable(token.Lexeme, id);
+      (EnvironmentManager.TopContext() as Method).AddVariable(token.Lexeme, id);
+      //EnvironmentManager.AddVariable(token.Lexeme, id);
       return new DeclarationStatement(id, true);
     }
 
