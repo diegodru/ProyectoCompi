@@ -115,12 +115,16 @@ namespace test
               if (this.lookAhead.TokenType == TokenType.Period)
               {
                 Match(TokenType.Period);
-                string methodname = this.lookAhead.Lexeme;
+                string name = this.lookAhead.Lexeme;
+                //if(EnvironmentManager.GetSymbol(name).SymbolType == SymbolType.Variable)
+                //{
+                  //(EnvironmentManager.GetSymbol(name).Value as Class).
+                //}
                 Class clase = EnvironmentManager.GetClass(symbol.Id.GetExpressionType().Lexeme).Value;
-                Symbol methodsymbol = clase.Get(methodname);
+                Symbol methodsymbol = clase.Get(name);
                 if(methodsymbol == null || methodsymbol.SymbolType != SymbolType.Method)
                 {
-                  throw new ApplicationException($"No existe el metodo '{methodname}' en la clase '{clase.Identifier.Generate()}'");
+                  throw new ApplicationException($"No existe el metodo '{name}' en la clase '{clase.Identifier.Generate()}'");
                 }
                 Match(TokenType.Identifier);
                 Match(TokenType.LeftParens);
@@ -342,58 +346,70 @@ namespace test
 
     private Expression Factor()
     {
-      switch (this.lookAhead.TokenType)
+      try
       {
-        case TokenType.LeftParens:
-          {
-            Match(TokenType.LeftParens);
-            var expression = Eq();
-            Match(TokenType.RightParens);
-            return new ParenthesesExpression(expression as TypedExpression);
-          }
-        case TokenType.IntConstant:
-          var constant = new Constant(lookAhead, Type.Int);
-          Match(TokenType.IntConstant);
-          return constant;
-        case TokenType.FloatConstant:
-          constant = new Constant(lookAhead, Type.Float);
-          Match(TokenType.FloatConstant);
-          return constant;
-        case TokenType.StringConstant:
-          constant = new Constant(lookAhead, Type.String);
-          Match(TokenType.StringConstant);
-          return constant;
-        case TokenType.BoolConstant:
-          constant = new Constant(lookAhead, Type.Bool);
-          Match(TokenType.BoolConstant);
-          return constant;
-        case TokenType.NewKeyword:
-          {
-            Match(TokenType.NewKeyword);
-            switch(this.lookAhead.TokenType)
+        switch (this.lookAhead.TokenType)
+        {
+          case TokenType.LeftParens:
             {
-              case TokenType.DateTimeKeyword:
-                {
-                  Move();
-                  Match(TokenType.LeftParens);
-                  var args = OptArguments();
-                  Match(TokenType.RightParens);
-                  return new DateTimeConstant(null, args as ArgumentExpression);
-                }
-              default:
-                var token = this.lookAhead;
-                Match(TokenType.Identifier);
-                if(!EnvironmentManager.ClassExists(token.Lexeme))
-                {
-                  throw new ApplicationException($"La clase {token.Lexeme} no existe");
-                }
-                Match(TokenType.LeftParens);
+              Match(TokenType.LeftParens);
+              var expression = Eq();
+              Match(TokenType.RightParens);
+              return new ParenthesesExpression(expression as TypedExpression);
             }
-          }
-        default:
-          var symbol = ID();
-          Match(TokenType.Identifier);
-          return symbol.Id;
+          case TokenType.IntConstant:
+            var constant = new Constant(lookAhead, Type.Int);
+            Match(TokenType.IntConstant);
+            return constant;
+          case TokenType.FloatConstant:
+            constant = new Constant(lookAhead, Type.Float);
+            Match(TokenType.FloatConstant);
+            return constant;
+          case TokenType.StringConstant:
+            constant = new Constant(lookAhead, Type.String);
+            Match(TokenType.StringConstant);
+            return constant;
+          case TokenType.BoolConstant:
+            constant = new Constant(lookAhead, Type.Bool);
+            Match(TokenType.BoolConstant);
+            return constant;
+          case TokenType.NewKeyword:
+            {
+              Match(TokenType.NewKeyword);
+              switch(this.lookAhead.TokenType)
+              {
+                case TokenType.DateTimeKeyword:
+                  {
+                    Move();
+                    Match(TokenType.LeftParens);
+                    var args = OptArguments();
+                    Match(TokenType.RightParens);
+                    return new DateTimeConstant(null, args as ArgumentExpression);
+                  }
+                default:
+                  var token = this.lookAhead;
+                  Match(TokenType.Identifier);
+                  if(!EnvironmentManager.ClassExists(token.Lexeme))
+                  {
+                    throw new ApplicationException($"La clase {token.Lexeme} no existe");
+                  }
+                  Console.WriteLine(token.Lexeme);
+                  Match(TokenType.LeftParens);
+                  var args2 = OptArguments();
+                  Match(TokenType.RightParens);
+                  return new NewExpression(token, token.Lexeme, args2 as ArgumentExpression);
+              }
+            }
+          default:
+            var symbol = ID();
+            Match(TokenType.Identifier);
+            return symbol.Id;
+        }
+      }
+      catch(Exception e)
+      {
+        Console.Error.WriteLine(e.Message);
+        throw new ApplicationException("");
       }
     }
 

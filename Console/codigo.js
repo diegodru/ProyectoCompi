@@ -26,6 +26,7 @@ this.t = 20
 }
 let b
 
+b = new lol(1, 2, 3)
 b.test(2)
 let a
 let z

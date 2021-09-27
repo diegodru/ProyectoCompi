@@ -20,6 +20,7 @@ class lol{
 
 }
 lol b;
+b = new lol(1, 2, 3);
 b.test(2);
 string a;
 DateTime z;

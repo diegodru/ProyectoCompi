@@ -17,7 +17,6 @@ namespace Core.Expressions
 
     public override void AddVariable(string lexeme, Id id)
     {
-      Console.WriteLine($"La variable {id.Generate()} de tipo {id.GetExpressionType().Lexeme} se ha agregado");
       base.AddVariable(lexeme, id);
       atributos.Add(id);
     }
