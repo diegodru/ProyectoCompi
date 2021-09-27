@@ -10,9 +10,17 @@ namespace Core.Expressions
     public Id(Token token, Type type, bool isAttribute) : base(token, type)
     {
       IsAttribute = isAttribute;
+      nombreVariable = "this";
+    }
+
+    public Id(Token token, Type type, string nombre) : base(token, type)
+    {
+      IsAttribute = true;
+      nombreVariable = nombre;
     }
 
     public bool IsAttribute { get; }
+    public string nombreVariable { get; }
 
     public override dynamic Evaluate()
     {
@@ -22,7 +30,7 @@ namespace Core.Expressions
     public override string Generate()
     {
       if(IsAttribute)
-        return $"this.{Token.Lexeme}";
+        return $"{nombreVariable}.{Token.Lexeme}";
       return Token.Lexeme;
     }
 

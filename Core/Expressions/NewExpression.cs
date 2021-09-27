@@ -3,23 +3,24 @@ namespace Core.Expressions
 {
   public class NewExpression : TypedExpression
   {
-    public NewExpression(Token token, string lexeme, ArgumentExpression args)
+    public NewExpression(Token token, Class clase, ArgumentExpression args)
       : base (token, null)
     {
-      Lexeme = lexeme;
+      Clase = Clase;
       Args = args;
+      EnvironmentManager.UpdateVariable(token.Lexeme, clase);
     }
-    public string Lexeme { get; }
+    public Class Clase { get; }
     public ArgumentExpression Args { get; } 
 
     public override string Generate()
     {
-      return $"new {Lexeme}({Args.Generate()})";
+      return $"new {Token.Lexeme}({Args.Generate()})";
     }
 
     public override Type GetExpressionType()
     {
-      return new Type(Lexeme, TokenType.ClassType);
+      return new Type(Token.Lexeme, TokenType.ClassType);
     }
 
     public override dynamic Evaluate()

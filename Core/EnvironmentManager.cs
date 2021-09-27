@@ -79,6 +79,26 @@ namespace Core
       throw new ApplicationException($"Symbol '{lexeme}' doesn't exist in current context");
     }
 
+    public static Symbol GetSymbolForEvaluation(string lexeme, Environment env)
+    {
+      bool comenzar = false;
+      foreach (var context in _interpretContexts)
+      {
+        if(!comenzar){
+          if(context == env)
+            comenzar = true;
+          else
+            continue;
+        }
+        var symbol = context.Get(lexeme);
+        if (symbol != null)
+        {
+          return symbol;
+        }
+      }
+      throw new ApplicationException($"Symbol {lexeme} doesn't exist in current context");
+    }
+
     public static Symbol GetSymbolForEvaluation(string lexeme)
     {
       foreach (var context in _interpretContexts)

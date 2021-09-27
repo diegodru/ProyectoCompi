@@ -10,11 +10,11 @@ class lol{
   lol(int i, bool hola, int adios){
     int j;
     j = 10;
-    this.a = true;
-    this.t = 10;
-    if(this.a)
+    a = !true;
+    t = 10;
+    if(a)
     {
-      this.t = 20;
+      t = 20;
     }
   }
 
@@ -27,7 +27,7 @@ DateTime z;
 z = new DateTime(5);
 a = "hola";
 int i;
-for(i = 5; (i< 5 && i != 0); --i){
+for(i = 5; ( (i < 5) && i != 0); --i){
   i = 4;
   i--;
 }

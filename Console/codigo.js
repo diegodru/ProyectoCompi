@@ -11,7 +11,7 @@ Constructor(i, hola, adios){
 let j
 
 j = 10
-this.a = true
+this.a = !true
 this.t = 10
 if(this.a)
 {
@@ -35,7 +35,7 @@ z = new Date(5)
 a = "hola"
 let i
 
-for(i = 5; (i < 5 && i != 0); --i){
+for(i = 5; ((i < 5) && i != 0); --i){
 i = 4
 i--
 }

@@ -17,6 +17,16 @@ namespace Core.Expressions
       };
     }
 
+    public LogicalOperator(Token token,
+        TypedExpression left
+        ) : base(token, left, null, null)
+    {
+      _typeRules = new Dictionary<(Type, Type), Type>
+      {
+        { (Type.Bool, Type.Bool), Type.Bool },
+      };
+    }
+
     public override dynamic Evaluate()
     {
       return Token.TokenType switch
@@ -30,6 +40,8 @@ namespace Core.Expressions
 
     public override string Generate()
     {
+      if(Token.TokenType == TokenType.NOT)
+        return $"!{left.Generate()}";
       return $"{left.Generate()} {Token.Lexeme} {right.Generate()}";
     }
 

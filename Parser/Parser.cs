@@ -116,22 +116,32 @@ namespace test
               {
                 Match(TokenType.Period);
                 string name = this.lookAhead.Lexeme;
-                //if(EnvironmentManager.GetSymbol(name).SymbolType == SymbolType.Variable)
-                //{
-                  //(EnvironmentManager.GetSymbol(name).Value as Class).
-                //}
-                Class clase = EnvironmentManager.GetClass(symbol.Id.GetExpressionType().Lexeme).Value;
-                Symbol methodsymbol = clase.Get(name);
-                if(methodsymbol == null || methodsymbol.SymbolType != SymbolType.Method)
+                if(EnvironmentManager.GetSymbol(name).SymbolType == SymbolType.Variable)
                 {
-                  throw new ApplicationException($"No existe el metodo '{name}' en la clase '{clase.Identifier.Generate()}'");
+                  Symbol variable = EnvironmentManager.GetSymbol(symbol.Id.Generate());
+                  Class contextoDeVariable = variable.Value as Class;
+                  EnvironmentManager.PushContext(contextoDeVariable);
+                  if (this.lookAhead.TokenType == TokenType.Assignation)
+                  {
+                    var assStmt = AssignStmt(EnvironmentManager.GetSymbol(name).Id);
+                  }
+                  EnvironmentManager.PopContext();
                 }
-                Match(TokenType.Identifier);
-                Match(TokenType.LeftParens);
-                var args = OptArguments();
-                Match(TokenType.RightParens);
-                Match(TokenType.SemiColon);
-                return new CallStatement(symbol, methodsymbol, args as ArgumentExpression);
+                else
+                {
+                  Class clase = EnvironmentManager.GetClass(symbol.Id.GetExpressionType().Lexeme).Value;
+                  Symbol methodsymbol = clase.Get(name);
+                  if(methodsymbol == null || methodsymbol.SymbolType != SymbolType.Method)
+                  {
+                    throw new ApplicationException($"No existe el metodo '{name}' en la clase '{clase.Identifier.Generate()}'");
+                  }
+                  Match(TokenType.Identifier);
+                  Match(TokenType.LeftParens);
+                  var args = OptArguments();
+                  Match(TokenType.RightParens);
+                  Match(TokenType.SemiColon);
+                  return new CallStatement(symbol, methodsymbol, args as ArgumentExpression);
+                }
               }
               if (this.lookAhead.TokenType == TokenType.Assignation)
               {
@@ -283,7 +293,7 @@ namespace test
       {
         var token = lookAhead;
         Move();
-        expression = new RelationalExpression(token, expression as TypedExpression, Rel() as TypedExpression);
+        expression = new LogicalOperator(token, expression as TypedExpression, Logical() as TypedExpression);
       }
 
       return expression;
@@ -291,13 +301,23 @@ namespace test
 
     private Expression Logical()
     {
-      var expression = Rel();
-      if (this.lookAhead.TokenType == TokenType.AND ||
-          this.lookAhead.TokenType == TokenType.OR)
+      Expression expression;
+      if(this.lookAhead.TokenType == TokenType.NOT)
       {
-        var token = lookAhead;
+        Token token = this.lookAhead;
         Move();
-        expression = new LogicalOperator(token, expression as TypedExpression, Rel() as TypedExpression);
+        expression = new LogicalOperator(token, Rel() as TypedExpression);
+      }
+      else
+      {
+        expression = Rel();
+        if (this.lookAhead.TokenType == TokenType.AND ||
+            this.lookAhead.TokenType == TokenType.OR)
+        {
+          var token = lookAhead;
+          Move();
+          expression = new LogicalOperator(token, expression as TypedExpression, Rel() as TypedExpression);
+        }
       }
       return expression;
     }
@@ -397,7 +417,8 @@ namespace test
                   Match(TokenType.LeftParens);
                   var args2 = OptArguments();
                   Match(TokenType.RightParens);
-                  return new NewExpression(token, token.Lexeme, args2 as ArgumentExpression);
+                  Class clase = EnvironmentManager.GetClass(token.Lexeme).Value;
+                  return new NewExpression(token, clase, args2 as ArgumentExpression);
               }
             }
           default:
@@ -502,6 +523,7 @@ namespace test
     {
       Match(TokenType.Assignation);
       var expression = Eq();
+      EnvironmentManager.UpdateVariable(id.Generate(), expression);
       return new AssignationStatement(id, expression as TypedExpression, true);
     }
 

@@ -29,7 +29,7 @@ namespace Core.Expressions
     {
       if (left != null)
       {
-        return $"{left?.Generate()}, {right.Generate()}";
+        return  $"{left?.Generate()}, {right.Generate()}";
       }
       return left?.Generate();
     }
