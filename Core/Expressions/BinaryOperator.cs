@@ -12,5 +12,6 @@
 
         public TypedExpression LeftExpression { get; }
         public TypedExpression RightExpression { get; }
+
     }
 }

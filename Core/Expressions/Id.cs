@@ -4,7 +4,15 @@ namespace Core.Expressions
   {
     public Id(Token token, Type type) : base(token, type)
     {
+      IsAttribute = false;
     }
+
+    public Id(Token token, Type type, bool isAttribute) : base(token, type)
+    {
+      IsAttribute = isAttribute;
+    }
+
+    public bool IsAttribute { get; }
 
     public override dynamic Evaluate()
     {
@@ -13,6 +21,8 @@ namespace Core.Expressions
     
     public override string Generate()
     {
+      if(IsAttribute)
+        return $"this.{Token.Lexeme}";
       return Token.Lexeme;
     }
 

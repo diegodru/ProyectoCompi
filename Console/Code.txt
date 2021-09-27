@@ -2,15 +2,29 @@ class lol{
   int t;
   bool a;
   lol(int i, bool hola, int adios){
+    int j;
+    j = 10;
     this.a = true;
     this.t = 10;
+    if(this.a)
+    {
+      this.t = 20;
+    }
+  }
+
+  int test(int q){
+    this.t = q;
+    Console.WriteLine(q + this.t);
+    return this.t;
   }
 }
 lol b;
 string a;
+DateTime z;
+z = new DateTime(5);
 a = "hola";
 int i;
-for(i = 5; i< 5 && i != 0; --i){
+for(i = 5; (i< 5 && i != 0); --i){
   i = 4;
   i--;
 }

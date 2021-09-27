@@ -1,3 +1,4 @@
+using System;
 namespace Core.Expressions
 {
   public class ReturnExpression : TypedExpression
@@ -8,10 +9,13 @@ namespace Core.Expressions
       Return = returnExpression;
     }
 
-    public TypedExpression Return{ get; }
+    public TypedExpression Return { get; }
 
     public override string Generate()
     {
+      Console.WriteLine(Return.GetExpressionType());
+      if(type == Type.Void)
+        return "return";
       return $"return {Return?.Generate()}";
     }
 

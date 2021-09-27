@@ -51,11 +51,35 @@ namespace test
 
     private Statement Stmts()
     {
-      if (this.lookAhead.TokenType == TokenType.CloseBrace || this.lookAhead.TokenType == TokenType.EOF)
+      if(this.lookAhead.TokenType == TokenType.ThisKeyword)
+      {
+        Match(TokenType.ThisKeyword);
+        Match(TokenType.Period);
+      }
+      if (this.lookAhead.TokenType == TokenType.CloseBrace || this.lookAhead.TokenType == TokenType.EOF || this.lookAhead.TokenType == TokenType.ReturnKeyword)
       {//{}
         return null;
       }
       return new SequenceStatement(Stmt(), Stmts());
+    }
+
+    private Symbol ID()
+    {
+      Symbol symbol;
+      if(this.lookAhead.TokenType == TokenType.ThisKeyword)
+      {
+        Match(TokenType.ThisKeyword);
+        Console.WriteLine(".");
+        Match(TokenType.Period);
+        Class clase = (EnvironmentManager.TopContext() as Method).Class;
+        if((symbol = clase.Get(this.lookAhead.Lexeme)) == null)
+        {
+          throw new ApplicationException($"no existe el simbolo {this.lookAhead.Lexeme} en la clase {clase.Identifier.Generate()}");
+        }
+      }
+      else
+        symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+      return symbol;
     }
 
     private Statement Stmt()
@@ -65,9 +89,28 @@ namespace test
         Statement statement1, statement2;
         switch (this.lookAhead.TokenType)
         {
+          case TokenType.ConsoleKeyword:
+            {
+              Match(TokenType.ConsoleKeyword);
+              Match(TokenType.Period);
+              if(this.lookAhead.TokenType == TokenType.WriteLineKeyword 
+                  || this.lookAhead.TokenType == TokenType.ReadLineKeyword
+                  )
+              {
+                var accion = this.lookAhead.TokenType;
+                Move();
+                Match(TokenType.LeftParens);
+                var exp = Eq();
+                Match(TokenType.RightParens);
+                Match(TokenType.SemiColon);
+                return new ConsoleStatement(accion, exp as TypedExpression);
+              }
+              else
+                throw new ApplicationException("Console solo puede leer y escribir");
+            }
           case TokenType.Identifier:
             {
-              var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+              var symbol = ID();
               Match(TokenType.Identifier);
               if (this.lookAhead.TokenType == TokenType.Assignation)
               {
@@ -143,7 +186,7 @@ namespace test
               Match(TokenType.ForKeyword);
               Match(TokenType.LeftParens);
               Console.WriteLine(this.lookAhead.Lexeme);
-              var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+              var symbol = ID();
               Match(TokenType.Identifier);
               var firstAssignation = AssignStmt(symbol.Id);
               Match(TokenType.SemiColon);
@@ -160,13 +203,13 @@ namespace test
               {
                 var type = this.lookAhead.TokenType;
                 Move();
-                symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+                symbol = ID();
                 Match(TokenType.Identifier);
                 last = new IncDecStatement(symbol.Id, type, true);
               }
               else
               {
-                symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+                symbol = ID();
                 Match(TokenType.Identifier);
                 if(this.lookAhead.TokenType == TokenType.Assignation)
                 {
@@ -197,7 +240,7 @@ namespace test
             {
               var token = this.lookAhead.TokenType;
               Move();
-              var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+              var symbol = ID();
               Match(TokenType.Identifier);
               Match(TokenType.SemiColon);
               return new IncDecStatement(symbol.Id, token, true);
@@ -289,7 +332,7 @@ namespace test
             Match(TokenType.LeftParens);
             var expression = Eq();
             Match(TokenType.RightParens);
-            return expression;
+            return new ParenthesesExpression(expression as TypedExpression);
           }
         case TokenType.IntConstant:
           var constant = new Constant(lookAhead, Type.Int);
@@ -307,13 +350,30 @@ namespace test
           constant = new Constant(lookAhead, Type.Bool);
           Match(TokenType.BoolConstant);
           return constant;
-          //case NewKeyword
+        case TokenType.NewKeyword:
+          {
+            Match(TokenType.NewKeyword);
+            switch(this.lookAhead.TokenType)
+            {
+              case TokenType.DateTimeKeyword:
+                {
+                  Move();
+                  Match(TokenType.LeftParens);
+                  var args = OptArguments();
+                  Match(TokenType.RightParens);
+                  return new DateTimeConstant(null, args as ArgumentExpression);
+                }
+              default:
+                throw new NotImplementedException(""); //////<---------- Clases
+            }
+          }
         default:
-          var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+          var symbol = ID();
           Match(TokenType.Identifier);
           return symbol.Id;
       }
     }
+
 
     //private Statement CallStmt(Symbol symbol)
     //{
@@ -387,10 +447,10 @@ namespace test
       var expression = Eq();
       if (this.lookAhead.TokenType != TokenType.Comma)
       {
-        return expression;
+        return new ArgumentExpression(expression as TypedExpression, null);
       }
       Match(TokenType.Comma);
-      expression = new ArgumentExpression(lookAhead, expression as TypedExpression, Arguments() as TypedExpression);
+      expression = new ArgumentExpression(expression as TypedExpression, Arguments() as TypedExpression);
       return expression;
     }
 
@@ -410,21 +470,16 @@ namespace test
 
     private Statement MethodBlock()
     {
-      switch(this.lookAhead.TokenType)
+      if(this.lookAhead.TokenType == TokenType.ReturnKeyword || this.lookAhead.TokenType == TokenType.CloseBrace)
       {
-        case TokenType.ThisKeyword:
-          {
-            Match(TokenType.ThisKeyword);
-            Match(TokenType.Period);
-            var token = this.lookAhead;
-            Match(TokenType.Identifier);
-            var symbol = EnvironmentManager.GetSymbol(token.Lexeme);
-            var assStmt = AttributeAssignStmt(symbol.Id);
-            Match(TokenType.SemiColon);
-            return new SequenceStatement(assStmt, MethodBlock());
-          }
+        return null;
       }
-      return null;
+      if(this.lookAhead.TokenType  == TokenType.ThisKeyword)
+        {
+          Match(TokenType.ThisKeyword);
+          Match(TokenType.Period);
+        }
+      return new SequenceStatement(new SequenceStatement(Decls(), Stmts()), MethodBlock());
     }
 
     private Statement ConstructorStmt(Class Class)
@@ -450,7 +505,13 @@ namespace test
       {
         Statement decl = Decl();
         if(decl != null)
+        {
+          if((decl as MethodStatement)?.lol() == typeof(MethodStatement))
+          {
+            return new SequenceStatement(decl, ClassBlock(Class));
+          }
           return ClassBlock(Class);
+        }
         var constructor = ConstructorStmt(Class);
         return new SequenceStatement(constructor, ClassBlock(Class));
       }
@@ -469,6 +530,8 @@ namespace test
       var classblock = new ClassStatement(NewClassId, ClassBlock(NewClass));
       EnvironmentManager.PopContext();
       Match(TokenType.CloseBrace);
+
+      
       return classblock;
     }
 
@@ -478,6 +541,8 @@ namespace test
           this.lookAhead.TokenType == TokenType.FloatKeyword ||
           this.lookAhead.TokenType == TokenType.BoolKeyword ||
           this.lookAhead.TokenType == TokenType.StringKeyword ||
+          this.lookAhead.TokenType == TokenType.VoidKeyword ||
+          this.lookAhead.TokenType == TokenType.DateTimeKeyword ||
           this.lookAhead.TokenType == TokenType.ClassKeyword ||
           EnvironmentManager.ClassExists(this.lookAhead.Lexeme)
           )
@@ -496,37 +561,95 @@ namespace test
       return null;
     }
 
+
     private Statement Decl()
     {
       Token TypeToken = this.lookAhead;
       Move();
       if(this.lookAhead.TokenType == TokenType.LeftParens)
       {
-        Console.WriteLine("tttt");
         return null;
       }
       Token token = this.lookAhead;
       Match(TokenType.Identifier);
+      if(this.lookAhead.TokenType == TokenType.LeftParens)
+      {
+        Id id2;
+        switch (TypeToken.TokenType)
+        {
+          case TokenType.FloatKeyword:
+            id2 = new Id(token, Type.Float);
+            break;
+          case TokenType.StringKeyword:
+            id2 = new Id(token, Type.String);
+            break;
+          case TokenType.BoolKeyword:
+            id2 = new Id(token, Type.Bool);
+            break;
+          case TokenType.IntKeyword:
+            id2 = new Id(token, Type.Int);;
+            break;
+          case TokenType.VoidKeyword:
+            id2 = new Id(token, Type.Void);
+            break;
+          case TokenType.DateTimeKeyword:
+            id2 = new Id(token, Type.DateTime);
+            break;
+          //case TokenType.ClassKeyword: ////////////////////////TODO
+            //throw new NotImplementedException(); //<---- clase
+          default: //<-------- TokenType.Identifer
+            id2 = new Id(token, new Type(TypeToken.Lexeme, TokenType.ClassType));
+            break;
+        }
+        var method = EnvironmentManager.TopContext().AddMethod(id2.Generate(), id2);
+        EnvironmentManager.PushContext(method as Core.Environment);
+        Match(TokenType.LeftParens);
+        var parametros = OptParams();
+        Match(TokenType.RightParens);
+
+        Match(TokenType.OpenBrace);
+        Console.WriteLine(this.lookAhead.TokenType);
+        var methodblock = MethodBlock();
+        ReturnExpression returnexpression = null;
+        if (this.lookAhead.TokenType == TokenType.ReturnKeyword)
+        {
+          Match(TokenType.ReturnKeyword);
+          if(id2.GetExpressionType() == Type.Void)
+          {
+            returnexpression =  new ReturnExpression(null, id2.GetExpressionType(), null);
+          }
+          else
+          {
+            returnexpression =  new ReturnExpression(null, id2.GetExpressionType(), Eq() as TypedExpression);
+          }
+          Match(TokenType.SemiColon);
+        }
+        Match(TokenType.CloseBrace);
+        EnvironmentManager.PopContext();
+        return new MethodStatement(id2, parametros, methodblock, returnexpression);
+      }
       Match(TokenType.SemiColon);
+      bool isAttribute = EnvironmentManager.TopContext().GetType() == typeof(Class);
       Id id;
       switch (TypeToken.TokenType)
       {
         case TokenType.FloatKeyword:
-          id = new Id(token, Type.Float);;
+          id = new Id(token, Type.Float, isAttribute);
           break;
         case TokenType.StringKeyword:
-          id = new Id(token, Type.String);
+          id = new Id(token, Type.String, isAttribute);
           break;
         case TokenType.BoolKeyword:
-          id = new Id(token, Type.Bool);
+          id = new Id(token, Type.Bool, isAttribute);
           break;
         case TokenType.IntKeyword:
-          id = new Id(token, Type.Int);;
+          id = new Id(token, Type.Int, isAttribute);;
           break;
-        //case TokenType.ClassKeyword: ////////////////////////TODO
-          //throw new NotImplementedException(); //<---- clase
+        case TokenType.DateTimeKeyword:
+          id = new Id(token, Type.DateTime, isAttribute);
+          break;
         default: //<-------- TokenType.Identifer
-          id = new Id(token, new Type(TypeToken.Lexeme, TokenType.ClassType));
+          id = new Id(token, new Type(TypeToken.Lexeme, TokenType.ClassType), isAttribute);
           break;
       }
       EnvironmentManager.AddVariable(token.Lexeme, id);

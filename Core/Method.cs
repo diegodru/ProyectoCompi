@@ -4,8 +4,7 @@ namespace Core.Expressions
 {
   public class Method : Environment
   {
-    private readonly Dictionary<string, Symbol> _table;
-
+    public List<Id> atributos;
     public Method(Id id, Class clase)
     {
       Identifier = id;

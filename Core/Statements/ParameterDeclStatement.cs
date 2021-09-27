@@ -18,6 +18,7 @@ namespace Core.Statements
           || idtype == Type.Float
           || idtype == Type.String
           || idtype == Type.Bool
+          || idtype == Type.DateTime
           || EnvironmentManager.ClassExists(Identifier.GetExpressionType().Lexeme)
         )
         return;

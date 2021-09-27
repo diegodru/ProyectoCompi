@@ -4,24 +4,22 @@ namespace Core.Statements
 {
   public class MethodStatement : Statement
   {
-    public MethodStatement(Type type, Id id, ArgumentExpression arguments,  Statement statements, TypedExpression returnExpression)
+    public MethodStatement(Id id, Statement parameters,  Statement statements, ReturnExpression returnExpression)
     {
-      Type = type;
       Id = id;
-      Arguments = arguments;
+      Parameters = parameters;
       Statements = statements;
       ReturnExpression = returnExpression;
     }
 
-    public Type Type { get; }
     public Id Id { get; }
-    public ArgumentExpression Arguments { get; }
+    public Statement Parameters { get; }
     public Statement Statements { get; }
-    public TypedExpression ReturnExpression { get; }
+    public ReturnExpression ReturnExpression { get; }
     
     public override string Generate()
     {
-      return $"{Id.Generate()}({Arguments?.Generate()}){{\n{Statements?.Generate()}\n{ReturnExpression?.Generate()}\n}}";
+      return $"{Id.Generate()}({Parameters?.Generate()}){{\n{Statements?.Generate()}\n{(ReturnExpression?.Generate())}\n}}";
     }
 
     public override void Interpret()
@@ -32,11 +30,26 @@ namespace Core.Statements
     {
       if(ReturnExpression != null)
       {
-        if(ReturnExpression.GetExpressionType() != Type)
+        if(this.ReturnExpression?.Return != null)
         {
-          throw new ApplicationException($"El metodo {Id.Generate()} debe retornar un valor de tipo {ReturnExpression.GetExpressionType()} y no de tipo {Type}"); 
+          //if(Id.GetExpressionType() == Type.Void)
+          //{
+            //throw new ApplicationException($"Un metodo de tipo void no puede retornar un valor de ninguno tipo");
+          //}
+        }
+        if(ReturnExpression.GetExpressionType() != Id.GetExpressionType())
+        {
+          throw new ApplicationException($"El metodo {Id.Generate()} debe retornar un valor de tipo {ReturnExpression.GetExpressionType()} y no de tipo {Id.GetExpressionType()}");
         }
       }
+
+      Parameters?.ValidateSemantic();
+      Statements?.ValidateSemantic();
+    }
+
+    public System.Type lol()
+    {
+      return typeof(MethodStatement);
     }
   }
 }

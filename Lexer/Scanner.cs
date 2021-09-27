@@ -21,7 +21,9 @@ namespace Lexer
                 { "int", TokenType.IntKeyword },
                 { "float", TokenType.FloatKeyword },
                 { "string", TokenType.StringKeyword },
+                { "DateTime", TokenType.DateTimeKeyword },
                 { "bool", TokenType.BoolKeyword },
+                { "void", TokenType.VoidKeyword },
                 { "for", TokenType.ForKeyword },
                 { "while", TokenType.WhileKeyword },
                 { "false", TokenType.BoolConstant },
@@ -30,6 +32,9 @@ namespace Lexer
                 { "class", TokenType.ClassKeyword },
                 { "return", TokenType.ReturnKeyword },
                 { "this", TokenType.ThisKeyword },
+                { "Console", TokenType.ConsoleKeyword },
+                { "WriteLine", TokenType.WriteLineKeyword },
+                { "ReadLine", TokenType.ReadLineKeyword },
             };
         }
 

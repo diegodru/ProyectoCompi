@@ -81,8 +81,10 @@ namespace Core
       return _contexts.Last().AddClass(lexeme, id);
     }
 
-    public static void AddMethod(string lexeme, Id id, BinaryOperator arguments) =>
-      _contexts.Last().AddMethod(lexeme, id, arguments);
+    public static Method AddMethod(string lexeme, Id id, BinaryOperator arguments)
+    {
+      return _contexts.Last().AddMethod(lexeme, id);
+    }
 
     public static void AddVariable(string lexeme, Id id) => _contexts.Last().AddVariable(lexeme, id);
 
@@ -124,12 +126,14 @@ namespace Core
       _table[lexeme] = variable;
     }
 
-    public virtual void AddMethod(string lexeme, Id id, BinaryOperator arguments)
+    public virtual Method AddMethod(string lexeme, Id id)
     {
-      if (!_table.TryAdd(lexeme, new Symbol(SymbolType.Method, id, arguments)))
+      Method method = new Method(id, this as Class);
+      if (!_table.TryAdd(lexeme, new Symbol(SymbolType.Method, id, method)))
       {
         throw new ApplicationException($"El metodo {lexeme} ya esta definido");
       }
+      return method;
     }
 
     public virtual Class AddClass(string lexeme, Id id)

@@ -24,6 +24,7 @@ namespace Core
     FloatConstant,
     StringConstant,
     BoolConstant,
+    DateTimeKeyword,
     ClassType,
     Assignation,
     Increment,
@@ -47,5 +48,8 @@ namespace Core
     ThisKeyword,
     ClassKeyword,
     ReturnKeyword,
+    ConsoleKeyword,
+    WriteLineKeyword,
+    ReadLineKeyword,
   }
 }

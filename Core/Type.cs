@@ -20,6 +20,7 @@ namespace Core
         public static Type Float => new Type("float", TokenType.FloatKeyword);
         public static Type Bool => new Type("bool", TokenType.BoolKeyword);
         public static Type String => new Type("string", TokenType.StringKeyword);
+        public static Type DateTime => new Type("DateTime", TokenType.DateTimeKeyword);
         public static Type Void => new Type("void", TokenType.VoidKeyword);
 
         public bool Equals(Type other)
