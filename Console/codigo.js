@@ -1,7 +1,6 @@
 let i
 
-i++
-for(i = 5; true; i++){
+for(i = 5; i < 5 && i != 0; --i){
 i = 4
-i = 5
+i--
 }

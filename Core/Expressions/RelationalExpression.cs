@@ -13,7 +13,6 @@ namespace Core.Expressions
     {
       _typeRules = new Dictionary<(Type, Type), Type>
       {
-        //pendiente
         { (Type.Float, Type.Float), Type.Bool },
         { (Type.Int, Type.Int), Type.Bool },
         { (Type.String, Type.String), Type.Bool },

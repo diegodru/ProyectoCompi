@@ -7,12 +7,12 @@ using Type = Core.Type;
 
 namespace test
 {
-  public class ElParser : IParser
+  public class Parser2 : IParser
   {
     private readonly IScanner scanner;
     private Token lookAhead;
 
-    public ElParser(IScanner scanner)
+    public Parser2(IScanner scanner)
     {
       this.scanner = scanner;
       this.Move();
@@ -25,14 +25,15 @@ namespace test
 
     private Statement Program()
     {
-      var block = Block();
       try{
+        var block = Block();
         block.ValidateSemantic();
+        return block;
       }catch(Exception e)
       {
         Console.Error.WriteLine(e.Message);
+        throw new ApplicationException();
       }
-      return block;
     }
 
     private Statement Block()
@@ -73,7 +74,7 @@ namespace test
               {
                 var type = this.lookAhead.TokenType;
                 Move();
-                var incdec = new IncDecStatement(symbol.Id, type);
+                var incdec = new IncDecStatement(symbol.Id, type, false);
                 Match(TokenType.SemiColon);
                 return incdec;
               }
@@ -84,6 +85,12 @@ namespace test
               Match(TokenType.IfKeyword);
               Match(TokenType.LeftParens);
               expression = Eq();
+              while(this.lookAhead.TokenType == TokenType.AND || this.lookAhead.TokenType == TokenType.OR)
+              {
+                var token = this.lookAhead;
+                Move();
+                expression = new LogicalOperator(token, expression as TypedExpression, Eq() as TypedExpression);
+              }
               Match(TokenType.RightParens);
               if(this.lookAhead.TokenType == TokenType.OpenBrace){
                 Match(TokenType.OpenBrace);
@@ -100,6 +107,31 @@ namespace test
               statement2 = Stmt();
               return new ElseStatement(expression as TypedExpression, statement1, statement2);
             }
+          case TokenType.WhileKeyword:
+            {
+              Match(TokenType.WhileKeyword);
+              Match(TokenType.LeftParens);
+              var relationalExpression = Rel();
+              while(this.lookAhead.TokenType == TokenType.AND || this.lookAhead.TokenType == TokenType.OR)
+              {
+                var token = this.lookAhead;
+                Move();
+                relationalExpression = new LogicalOperator(token, relationalExpression as TypedExpression, Eq() as TypedExpression);
+              }
+              Match(TokenType.RightParens);
+              Statement loop;
+              if(this.lookAhead.TokenType == TokenType.OpenBrace)
+              {
+                Match(TokenType.OpenBrace);
+                loop = Block();
+                Match(TokenType.CloseBrace);
+              }else
+              {
+                loop = Stmt();
+              }
+              return new WhileStatement(relationalExpression as TypedExpression, loop);
+
+            }
           case TokenType.ForKeyword:
             {
               Match(TokenType.ForKeyword);
@@ -109,17 +141,38 @@ namespace test
               var firstAssignation = AssignStmt(symbol.Id);
               Match(TokenType.SemiColon);
               var check = Eq();
+              while(this.lookAhead.TokenType == TokenType.AND || this.lookAhead.TokenType == TokenType.OR)
+              {
+                var token = this.lookAhead;
+                Move();
+                expression = new LogicalOperator(token, check as TypedExpression, Eq() as TypedExpression);
+              }
               Match(TokenType.SemiColon);
-              symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
-              Match(TokenType.Identifier);
               Statement last;
-              if(this.lookAhead.TokenType == TokenType.Assignation)
-                last = AssignStmt(symbol.Id);
-              else //if (this.lookAhead.TokenType == TokenType.Increment || this.lookAhead.TokenType == TokenType.Decrement)
+              if (this.lookAhead.TokenType == TokenType.Increment || this.lookAhead.TokenType == TokenType.Decrement)
               {
                 var type = this.lookAhead.TokenType;
                 Move();
-                last = new IncDecStatement(symbol.Id, type);
+                symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+                Match(TokenType.Identifier);
+                last = new IncDecStatement(symbol.Id, type, true);
+              }
+              else
+              {
+                symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+                Match(TokenType.Identifier);
+                if(this.lookAhead.TokenType == TokenType.Assignation)
+                {
+                  last = AssignStmt(symbol.Id);
+                }
+                else if (this.lookAhead.TokenType == TokenType.Increment || this.lookAhead.TokenType == TokenType.Decrement)
+                {
+                  var type = this.lookAhead.TokenType;
+                  Move();
+                  last = new IncDecStatement(symbol.Id, type, false);
+                }
+                else
+                  last = new IncDecStatement(null, TokenType.RightParens, false);  // <----------- CallStmt
               }
               Match(TokenType.RightParens);
               Statement loop;
@@ -132,6 +185,17 @@ namespace test
                 loop = Stmt();
               return new ForStatement(firstAssignation as AssignationStatement, check as TypedExpression, last, loop); 
             }
+          case TokenType.Increment:
+          case TokenType.Decrement:
+            {
+              var token = this.lookAhead.TokenType;
+              Move();
+              var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+              Match(TokenType.Identifier);
+              Match(TokenType.SemiColon);
+              return new IncDecStatement(symbol.Id, token, true);
+            }
+
           default:
             return Block();
         }
@@ -143,14 +207,27 @@ namespace test
 
     private Expression Eq()
     {
-      var expression = Rel();
-      while (this.lookAhead.TokenType == TokenType.Equal || this.lookAhead.TokenType == TokenType.NotEqual)
+      var expression = Logical();
+      if (this.lookAhead.TokenType == TokenType.Equal || this.lookAhead.TokenType == TokenType.NotEqual)
       {
         var token = lookAhead;
         Move();
         expression = new RelationalExpression(token, expression as TypedExpression, Rel() as TypedExpression);
       }
 
+      return expression;
+    }
+
+    private Expression Logical()
+    {
+      var expression = Rel();
+      if (this.lookAhead.TokenType == TokenType.AND ||
+          this.lookAhead.TokenType == TokenType.OR)
+      {
+        var token = lookAhead;
+        Move();
+        expression = new LogicalOperator(token, expression as TypedExpression, Rel() as TypedExpression);
+      }
       return expression;
     }
 

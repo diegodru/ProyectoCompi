@@ -23,9 +23,12 @@ namespace Lexer
                 { "string", TokenType.StringKeyword },
                 { "bool", TokenType.BoolKeyword },
                 { "for", TokenType.ForKeyword },
+                { "while", TokenType.WhileKeyword },
                 { "false", TokenType.BoolConstant },
                 { "true", TokenType.BoolConstant },
-                { "new", TokenType.BoolConstant },
+                { "new", TokenType.NewKeyword },
+                { "class", TokenType.ClassKeyword },
+                { "return", TokenType.ReturnKeyword },
             };
         }
 
@@ -199,6 +202,65 @@ namespace Lexer
                                 Line = input.Position.Line,
                                 Lexeme = lexeme.ToString()
                             };
+                        case '|':
+                            lexeme.Append(currentChar);
+                            nextChar = GetNextChar();
+                            switch(nextChar)
+                            {
+                              case '|':
+                                GetNextChar();
+                                lexeme.Append(nextChar);
+                                return new Token
+                                {
+                                    TokenType = TokenType.OR,
+                                    Column = input.Position.Column,
+                                    Line = input.Position.Line,
+                                    Lexeme = lexeme.ToString()
+                                };
+                              default:
+                                throw new ApplicationException($"Character '|' expected but found {nextChar}");
+                            }
+                        case '&':
+                            lexeme.Append(currentChar);
+                            nextChar = GetNextChar();
+                            switch(nextChar)
+                            {
+                              case '&':
+                                GetNextChar();
+                                lexeme.Append(nextChar);
+                                return new Token
+                                {
+                                    TokenType = TokenType.AND,
+                                    Column = input.Position.Column,
+                                    Line = input.Position.Line,
+                                    Lexeme = lexeme.ToString()
+                                };
+                              default:
+                                throw new ApplicationException($"Character '&' expected but found {nextChar}");
+                            }
+                        case '!':
+                            lexeme.Append(currentChar);
+                            nextChar = PeekNextChar();
+                            if (nextChar != '=')
+                            {
+                                return new Token
+                                {
+                                    TokenType = TokenType.NOT,
+                                    Column = input.Position.Column,
+                                    Line = input.Position.Line,
+                                    Lexeme = lexeme.ToString().Trim()
+                                };
+                            }
+
+                            lexeme.Append(nextChar);
+                            GetNextChar();
+                            return new Token
+                            {
+                                TokenType = TokenType.NotEqual,
+                                Column = input.Position.Column,
+                                Line = input.Position.Line,
+                                Lexeme = lexeme.ToString().Trim()
+                            };
                         case '+':
                             lexeme.Append(currentChar);
                             nextChar = PeekNextChar();
@@ -227,13 +289,29 @@ namespace Lexer
                             break;
                         case '-':
                             lexeme.Append(currentChar);
-                            return new Token
+                            nextChar = PeekNextChar();
+                            switch(nextChar)
                             {
-                                TokenType = TokenType.Minus,
-                                Column = input.Position.Column,
-                                Line = input.Position.Line,
-                                Lexeme = lexeme.ToString()
-                            };
+                              case '-':
+                                GetNextChar();
+                                lexeme.Append(nextChar);
+                                return new Token
+                                {
+                                  TokenType = TokenType.Decrement,
+                                  Column = input.Position.Column,
+                                  Line = input.Position.Line,
+                                  Lexeme = lexeme.ToString()
+                                };
+                              default:
+                                lexeme.Append(currentChar);
+                                return new Token
+                                {
+                                  TokenType = TokenType.Minus,
+                                  Column = input.Position.Column,
+                                  Line = input.Position.Line,
+                                  Lexeme = lexeme.ToString()
+                                };
+                            }
                         case '(':
                             lexeme.Append(currentChar);
                             return new Token
@@ -272,6 +350,20 @@ namespace Lexer
                             };
                         case '=':
                             lexeme.Append(currentChar);
+                            nextChar = PeekNextChar();
+                            if (nextChar == '=')
+                            {
+                                lexeme.Append(nextChar);
+                                GetNextChar();
+                                return new Token
+                                {
+                                    TokenType = TokenType.Equal,
+                                    Column = input.Position.Column,
+                                    Line = input.Position.Line,
+                                    Lexeme = lexeme.ToString().Trim()
+                                };
+                            }
+                            lexeme.Append(currentChar);
                             return new Token
                             {
                                 TokenType = TokenType.Assignation,
@@ -279,28 +371,11 @@ namespace Lexer
                                 Line = input.Position.Line,
                                 Lexeme = lexeme.ToString()
                             };
-                        case ':':
+                        case '\"':
                             {
                                 lexeme.Append(currentChar);
                                 currentChar = GetNextChar();
-                                if (currentChar != '=')
-                                {
-                                    throw new ApplicationException($"Caracter {lexeme} invalido en la columna: {input.Position.Column}, fila: {input.Position.Line}");
-                                }
-                                lexeme.Append(currentChar);
-                                return new Token
-                                {
-                                    TokenType = TokenType.Assignation,
-                                    Column = input.Position.Column,
-                                    Line = input.Position.Line,
-                                    Lexeme = lexeme.ToString()
-                                };
-                            }
-                        case '\'':
-                            {
-                                lexeme.Append(currentChar);
-                                currentChar = GetNextChar();
-                                while (currentChar != '\'')
+                                while (currentChar != '\"')
                                 {
                                     lexeme.Append(currentChar);
                                     currentChar = GetNextChar();

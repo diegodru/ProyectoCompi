@@ -11,11 +11,14 @@ namespace Core
     RightParens,
     SemiColon,
     Equal,
+    NotEqual,
     LessThan,
     LessThanOrEqual,
     GreaterThan,
     GreaterThanOrEqual,
-    NotEqual,
+    AND,
+    OR,
+    NOT,
     Identifier, //<--- este si papa
     IntConstant,
     FloatConstant,
@@ -29,6 +32,7 @@ namespace Core
     CloseBrace,
     Comma,
     BasicType,
+    VoidKeyword,
     IntKeyword,
     FloatKeyword,
     BoolKeyword,
@@ -36,5 +40,9 @@ namespace Core
     IfKeyword,
     ElseKeyword,
     ForKeyword,
+    WhileKeyword,
+    NewKeyword,
+    ClassKeyword,
+    ReturnKeyword,
   }
 }
