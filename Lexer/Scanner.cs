@@ -55,7 +55,6 @@ namespace Lexer
 
                     if (this.keywords.ContainsKey(lexeme.ToString()))
                     {
-                      Console.WriteLine(lexeme.ToString());
                         return new Token
                         {
                             TokenType = this.keywords[lexeme.ToString()],
@@ -286,7 +285,6 @@ namespace Lexer
                                   Lexeme = lexeme.ToString()
                               };
                             }
-                            break;
                         case '-':
                             lexeme.Append(currentChar);
                             nextChar = PeekNextChar();
@@ -351,26 +349,28 @@ namespace Lexer
                         case '=':
                             lexeme.Append(currentChar);
                             nextChar = PeekNextChar();
-                            if (nextChar == '=')
+                            switch(nextChar)
                             {
-                                lexeme.Append(nextChar);
+                              case '=': 
                                 GetNextChar();
+                                lexeme.Append(nextChar);
                                 return new Token
-                                {
-                                    TokenType = TokenType.Equal,
-                                    Column = input.Position.Column,
-                                    Line = input.Position.Line,
-                                    Lexeme = lexeme.ToString().Trim()
-                                };
+                              {
+                                  TokenType = TokenType.Equal,
+                                  Column = input.Position.Column,
+                                  Line = input.Position.Line,
+                                  Lexeme = lexeme.ToString()
+                              };
+                              default:
+                                lexeme.Append(nextChar);
+                                return new Token
+                              {
+                                  TokenType = TokenType.Assignation,
+                                  Column = input.Position.Column,
+                                  Line = input.Position.Line,
+                                  Lexeme = lexeme.ToString()
+                              };
                             }
-                            lexeme.Append(currentChar);
-                            return new Token
-                            {
-                                TokenType = TokenType.Assignation,
-                                Column = input.Position.Column,
-                                Line = input.Position.Line,
-                                Lexeme = lexeme.ToString()
-                            };
                         case '\"':
                             {
                                 lexeme.Append(currentChar);

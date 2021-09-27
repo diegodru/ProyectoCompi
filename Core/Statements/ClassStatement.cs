@@ -15,7 +15,7 @@ namespace Core.Statements
 
     public override string Generate()
     {
-      return $"class {Identifier.Generate()} {{\n{Declarations.Generate()}\n}}";
+      return $"class {Identifier.Generate()} {{\n{Declarations?.Generate()}\n}}";
     }
 
     public override void Interpret()

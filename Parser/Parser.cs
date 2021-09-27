@@ -39,6 +39,11 @@ namespace test
     private Statement Block()
     {
       EnvironmentManager.PushContext();
+      EnvironmentManager.AddClass("test", new Id(new Token
+            {
+            Lexeme = "test",
+            }, new Type("test", TokenType.ClassType))
+          );
       var stmts = new SequenceStatement(Decls(), Stmts());
       EnvironmentManager.PopContext();
       return stmts;
@@ -66,6 +71,7 @@ namespace test
               Match(TokenType.Identifier);
               if (this.lookAhead.TokenType == TokenType.Assignation)
               {
+                Console.WriteLine(symbol.Id.Generate());
                 var assStmt = AssignStmt(symbol.Id);
                 Match(TokenType.SemiColon);
                 return assStmt;
@@ -136,6 +142,7 @@ namespace test
             {
               Match(TokenType.ForKeyword);
               Match(TokenType.LeftParens);
+              Console.WriteLine(this.lookAhead.Lexeme);
               var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
               Match(TokenType.Identifier);
               var firstAssignation = AssignStmt(symbol.Id);
@@ -177,6 +184,7 @@ namespace test
               Match(TokenType.RightParens);
               Statement loop;
               if(this.lookAhead.TokenType == TokenType.OpenBrace){
+                Console.WriteLine("brace");
                 Match(TokenType.OpenBrace);
                   loop = Block();
                 Match(TokenType.CloseBrace);
@@ -237,7 +245,10 @@ namespace test
       if (this.lookAhead.TokenType == TokenType.LessThan
           || this.lookAhead.TokenType == TokenType.GreaterThan
           || this.lookAhead.TokenType == TokenType.LessThanOrEqual
-          || this.lookAhead.TokenType == TokenType.GreaterThanOrEqual)
+          || this.lookAhead.TokenType == TokenType.GreaterThanOrEqual
+          || this.lookAhead.TokenType == TokenType.Equal
+          || this.lookAhead.TokenType == TokenType.NotEqual
+          )
       {
         var token = lookAhead;
         Move();
@@ -342,28 +353,57 @@ namespace test
       return new AssignationStatement(id, expression as TypedExpression);
     }
 
+    private Statement ClassBlock(Token token)
+    {
+      Id NewClassId = new Id(token, new Type(token.Lexeme, TokenType.ClassType));
+      EnvironmentManager.AddClass(token.Lexeme, NewClassId);
+      return new ClassStatement(NewClassId, null);
+    }
+
+    private Statement ClassDecl()
+    {
+      Match(TokenType.ClassKeyword);
+      var token = this.lookAhead;
+      Match(TokenType.Identifier);
+      Match(TokenType.OpenBrace);
+      var classblock = ClassBlock(token);
+      Match(TokenType.CloseBrace);
+      return classblock;
+    }
+
     private Statement Decls()
     {
       if (this.lookAhead.TokenType == TokenType.IntKeyword ||
           this.lookAhead.TokenType == TokenType.FloatKeyword ||
           this.lookAhead.TokenType == TokenType.BoolKeyword ||
-          this.lookAhead.TokenType == TokenType.StringKeyword)
-        //<------------ Class
+          this.lookAhead.TokenType == TokenType.StringKeyword ||
+          this.lookAhead.TokenType == TokenType.ClassKeyword ||
+          EnvironmentManager.ClassExists(this.lookAhead.Lexeme)
+          )
       {
-        return new SequenceStatement(Decl(), Decls());
+        Statement decl;
+        if(this.lookAhead.TokenType == TokenType.ClassKeyword)
+        {
+          decl = ClassDecl();
+        }
+        else
+        {
+          decl = Decl();
+        }
+        return new SequenceStatement(decl, Decls());
       }
       return null;
     }
 
     private Statement Decl()
     {
-      TokenType tokenType = this.lookAhead.TokenType;
-      Match(tokenType);
-      Token token = lookAhead;
+      Token TypeToken = this.lookAhead;
+      Move();
+      Token token = this.lookAhead;
       Match(TokenType.Identifier);
       Match(TokenType.SemiColon);
       Id id;
-      switch (tokenType)
+      switch (TypeToken.TokenType)
       {
         case TokenType.FloatKeyword:
           id = new Id(token, Type.Float);;
@@ -374,8 +414,13 @@ namespace test
         case TokenType.BoolKeyword:
           id = new Id(token, Type.Bool);
           break;
-        default:
+        case TokenType.IntKeyword:
           id = new Id(token, Type.Int);;
+          break;
+        //case TokenType.ClassKeyword: ////////////////////////TODO
+          //throw new NotImplementedException(); //<---- clase
+        default: //<-------- TokenType.Identifer
+          id = new Id(token, new Type(TypeToken.Lexeme, TokenType.ClassType));
           break;
       }
       EnvironmentManager.AddVariable(token.Lexeme, id);

@@ -19,11 +19,12 @@ namespace Core
     AND,
     OR,
     NOT,
-    Identifier, //<--- este si papa
+    Identifier,
     IntConstant,
     FloatConstant,
     StringConstant,
     BoolConstant,
+    ClassType,
     Assignation,
     Increment,
     Decrement,

@@ -25,6 +25,18 @@ namespace Core
       return lastContext;
     }
 
+    public static bool ClassExists(string lexeme)
+    {
+      foreach (var context in _interpretContexts)
+      {
+        var symbol = context.Get(lexeme);
+        if (symbol != null && symbol.SymbolType == SymbolType.Class)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
 
     public static Symbol GetSymbol(string lexeme)
     {
@@ -52,8 +64,8 @@ namespace Core
       }
       throw new ApplicationException($"Symbol {lexeme} doesn't exist in current context");
     }
-    public static void AddClass(string lexeme, Id id, BinaryOperator arguments) => 
-      _contexts.Last().AddClass(lexeme, id, null);
+    public static void AddClass(string lexeme, Id id) => 
+      _contexts.Last().AddClass(lexeme, id);
 
     public static void AddMethod(string lexeme, Id id, BinaryOperator arguments) =>
       _contexts.Last().AddMethod(lexeme, id, arguments);
@@ -106,9 +118,9 @@ namespace Core
       }
     }
 
-    public void AddClass(string lexeme, Id id, Environment classEnv)
+    public void AddClass(string lexeme, Id id)
     {
-      if (!_table.TryAdd(lexeme, new Symbol(SymbolType.Class, id, classEnv)))
+      if (!_table.TryAdd(lexeme, new Symbol(SymbolType.Class, id, new Class(id))))
       {
         throw new ApplicationException($"La Clase {lexeme} ya esta definida");
       }

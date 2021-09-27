@@ -2,9 +2,9 @@ using System;
 using Core.Expressions;
 namespace Core.Statements
 {
-  public class MethodStatement2 : Statement
+  public class MethodStatement : Statement
   {
-    public MethodStatement2(Type type, Id id, ArgumentExpression arguments,  Statement statements, TypedExpression returnExpression)
+    public MethodStatement(Type type, Id id, ArgumentExpression arguments,  Statement statements, TypedExpression returnExpression)
     {
       Type = type;
       Id = id;

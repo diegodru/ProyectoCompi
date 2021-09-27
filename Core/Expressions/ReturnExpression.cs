@@ -12,7 +12,7 @@ namespace Core.Expressions
 
     public override string Generate()
     {
-      return $"return {Return.Generate()}";
+      return $"return {Return?.Generate()}";
     }
 
     public override Type GetExpressionType()
