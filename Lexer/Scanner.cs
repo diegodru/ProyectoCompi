@@ -29,6 +29,7 @@ namespace Lexer
                 { "new", TokenType.NewKeyword },
                 { "class", TokenType.ClassKeyword },
                 { "return", TokenType.ReturnKeyword },
+                { "this", TokenType.ThisKeyword },
             };
         }
 
@@ -310,6 +311,15 @@ namespace Lexer
                                   Lexeme = lexeme.ToString()
                                 };
                             }
+                        case '.':
+                            lexeme.Append(currentChar);
+                            return new Token
+                            {
+                                TokenType = TokenType.Period,
+                                Column = input.Position.Column,
+                                Line = input.Position.Line,
+                                Lexeme = lexeme.ToString()
+                            };
                         case '(':
                             lexeme.Append(currentChar);
                             return new Token

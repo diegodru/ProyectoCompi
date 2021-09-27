@@ -2,16 +2,14 @@ using System;
 using Core.Expressions;
 namespace Core.Statements
 {
-  public class DeclarationStatement : Statement
+  public class ParameterDeclStatment : Statement
   {
-    public DeclarationStatement(Id id, bool isParameter)
+    public ParameterDeclStatment(Id id)
     {
       Identifier = id;
-      IsParameter = isParameter;
     }
 
     public Id Identifier { get; }
-    public bool IsParameter { get; }
 
     public override void ValidateSemantic()
     {
@@ -33,9 +31,8 @@ namespace Core.Statements
 
     public override string Generate()
     {
-      if(IsParameter)
-        return Identifier.Generate();
-      return $"let {Identifier.Generate()}";
+      return Identifier.Generate();
     }
   }
 }
+

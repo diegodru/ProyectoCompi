@@ -1,6 +1,12 @@
-class lol{}
+class lol{
+  int t;
+  lol(int i, bool hola, int adios){
+    this.t = i;
+  }
+}
 lol b;
-test a;
+string a;
+a = "hola";
 int i;
 for(i = 5; i< 5 && i != 0; --i){
   i = 4;

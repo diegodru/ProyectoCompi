@@ -24,6 +24,7 @@ namespace Core.Statements
 
     public override void ValidateSemantic()
     {
+      Declarations?.ValidateSemantic();
     }
   }
 }

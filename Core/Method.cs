@@ -2,17 +2,15 @@ using System;
 using System.Collections.Generic;
 namespace Core.Expressions
 {
-  public class Class : Environment
+  public class Method : Environment
   {
     private readonly Dictionary<string, Symbol> _table;
 
-    public Class(Id id)
+    public Method(Id id)
     {
       Identifier = id;
-      Constructor = new Method(id);
     }
     public Id Identifier { get; }
-
-    public Method Constructor { get; set; }
   }
 }
+

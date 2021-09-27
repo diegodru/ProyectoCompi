@@ -54,6 +54,7 @@ namespace Core.Statements
     
     public override void ValidateSemantic()
     {
+      FirstAssignation?.ValidateSemantic();
       if(Check != null)
       {
         if(Check.GetExpressionType() != Type.Bool)
@@ -61,6 +62,8 @@ namespace Core.Statements
           throw new ApplicationException("el for solo puede evaluar bools");
         }
       }
+      LastAssignation.ValidateSemantic();
+      Loop.ValidateSemantic();
     }
 
   }

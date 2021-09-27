@@ -65,6 +65,33 @@ namespace test
         Statement statement1, statement2;
         switch (this.lookAhead.TokenType)
         {
+          case TokenType.ThisKeyword:
+            {
+              if(EnvironmentManager.TopContext().GetType() != typeof(Class))
+              {
+                throw new ApplicationException("el keyword this solo se puede usar dentro del contexto de una clase");
+              }
+              Match(TokenType.ThisKeyword);
+              Match(TokenType.Period);
+              var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
+              Match(TokenType.Identifier);
+              if (this.lookAhead.TokenType == TokenType.Assignation)
+              {
+                Console.WriteLine(symbol.Id.Generate());
+                var assStmt = AssignStmt(symbol.Id);
+                Match(TokenType.SemiColon);
+                return assStmt;
+              }
+              else if (this.lookAhead.TokenType == TokenType.Increment || this.lookAhead.TokenType == TokenType.Decrement)
+              {
+                var type = this.lookAhead.TokenType;
+                Move();
+                var incdec = new IncDecStatement(symbol.Id, type, false);
+                Match(TokenType.SemiColon);
+                return incdec;
+              }
+              throw new ApplicationException("No se han implementado los metodos");
+            }
           case TokenType.Identifier:
             {
               var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
@@ -184,7 +211,6 @@ namespace test
               Match(TokenType.RightParens);
               Statement loop;
               if(this.lookAhead.TokenType == TokenType.OpenBrace){
-                Console.WriteLine("brace");
                 Match(TokenType.OpenBrace);
                   loop = Block();
                 Match(TokenType.CloseBrace);
@@ -325,7 +351,47 @@ namespace test
       //return new CallStatement(symbol.Id, @params, symbol.Attributes);
     //}
 
-    private Expression OptParams()
+    private Statement Param()
+    {
+      Token TypeToken = this.lookAhead;
+      Move();
+      Token token = this.lookAhead;
+      Match(TokenType.Identifier);
+      Id id;
+      switch (TypeToken.TokenType)
+      {
+        case TokenType.FloatKeyword:
+          id = new Id(token, Type.Float);;
+          break;
+        case TokenType.StringKeyword:
+          id = new Id(token, Type.String);
+          break;
+        case TokenType.BoolKeyword:
+          id = new Id(token, Type.Bool);
+          break;
+        case TokenType.IntKeyword:
+          id = new Id(token, Type.Int);;
+          break;
+        default: //<-------- TokenType.Identifer
+          id = new Id(token, new Type(TypeToken.Lexeme, TokenType.ClassType));
+          break;
+      }
+      EnvironmentManager.AddVariable(token.Lexeme, id);
+      return new DeclarationStatement(id, true);
+    }
+
+    private Statement Params()
+    {
+      var param = Param();
+      if(this.lookAhead.TokenType == TokenType.Comma)
+      {
+        Match(TokenType.Comma);
+        return new ParameterStatement(param, Params());
+      }
+      return param;
+    }
+
+    private Statement OptParams()
     {
       if (this.lookAhead.TokenType != TokenType.RightParens)
       {
@@ -334,7 +400,16 @@ namespace test
       return null;
     }
 
-    private Expression Params()
+    private Expression OptArguments()
+    {
+      if (this.lookAhead.TokenType != TokenType.RightParens)
+      {
+        return Arguments();
+      }
+      return null;
+    }
+
+    private Expression Arguments()
     {
       var expression = Eq();
       if (this.lookAhead.TokenType != TokenType.Comma)
@@ -342,22 +417,69 @@ namespace test
         return expression;
       }
       Match(TokenType.Comma);
-      expression = new ArgumentExpression(lookAhead, expression as TypedExpression, Params() as TypedExpression);
+      expression = new ArgumentExpression(lookAhead, expression as TypedExpression, Arguments() as TypedExpression);
       return expression;
+    }
+
+    private Statement AttributeAssignStmt(Id id)
+    {
+      Match(TokenType.Assignation);
+      var expression = Eq();
+      return new AssignationStatement(id, expression as TypedExpression, true);
     }
 
     private Statement AssignStmt(Id id)
     {
       Match(TokenType.Assignation);
       var expression = Eq();
-      return new AssignationStatement(id, expression as TypedExpression);
+      return new AssignationStatement(id, expression as TypedExpression, false);
     }
 
-    private Statement ClassBlock(Token token)
+    private Statement MethodBlock()
     {
-      Id NewClassId = new Id(token, new Type(token.Lexeme, TokenType.ClassType));
-      EnvironmentManager.AddClass(token.Lexeme, NewClassId);
-      return new ClassStatement(NewClassId, null);
+      if(this.lookAhead.TokenType == TokenType.ThisKeyword)
+      {
+        Match(TokenType.ThisKeyword);
+        Match(TokenType.Period);
+        var token = this.lookAhead;
+        Match(TokenType.Identifier);
+        var symbol = EnvironmentManager.GetSymbol(token.Lexeme);
+        var assStmt = AttributeAssignStmt(symbol.Id);
+        Match(TokenType.SemiColon);
+        return assStmt;
+      }
+      var block = Block();
+      return block;
+    }
+
+    private Statement ConstructorStmt(Class Class)
+    {
+        //Match(TokenType.Identifier);
+
+        Match(TokenType.LeftParens);
+        EnvironmentManager.PushContext(Class.Constructor);
+        var parametros = OptParams();
+        EnvironmentManager.PopContext();
+        Match(TokenType.RightParens);
+
+        Match(TokenType.OpenBrace);
+        var methodblock = MethodBlock();
+        Match(TokenType.CloseBrace);
+
+        return new ConstructorStatement(parametros, methodblock);
+    }
+
+    private Statement ClassBlock(Class Class)
+    {
+      if(this.lookAhead.TokenType != TokenType.CloseBrace)
+      {
+        Statement decl = Decl();
+        if(decl != null)
+          return ClassBlock(Class);
+        var constructor = ConstructorStmt(Class);
+        return new SequenceStatement(constructor, ClassBlock(Class));
+      }
+      return null;
     }
 
     private Statement ClassDecl()
@@ -366,7 +488,11 @@ namespace test
       var token = this.lookAhead;
       Match(TokenType.Identifier);
       Match(TokenType.OpenBrace);
-      var classblock = ClassBlock(token);
+      Id NewClassId = new Id(token, new Type(token.Lexeme, TokenType.ClassType));
+      var NewClass = EnvironmentManager.AddClass(token.Lexeme, NewClassId);
+      EnvironmentManager.PushContext(NewClass as Core.Environment);
+      var classblock = new ClassStatement(NewClassId, ClassBlock(NewClass));
+      EnvironmentManager.PopContext();
       Match(TokenType.CloseBrace);
       return classblock;
     }
@@ -399,6 +525,11 @@ namespace test
     {
       Token TypeToken = this.lookAhead;
       Move();
+      if(this.lookAhead.TokenType == TokenType.LeftParens)
+      {
+        Console.WriteLine("tttt");
+        return null;
+      }
       Token token = this.lookAhead;
       Match(TokenType.Identifier);
       Match(TokenType.SemiColon);
@@ -424,7 +555,7 @@ namespace test
           break;
       }
       EnvironmentManager.AddVariable(token.Lexeme, id);
-      return new DeclarationStatement(id);
+      return new DeclarationStatement(id, false);
     }
 
     private void Move()

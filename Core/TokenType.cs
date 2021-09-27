@@ -32,6 +32,7 @@ namespace Core
     OpenBrace,
     CloseBrace,
     Comma,
+    Period,
     BasicType,
     VoidKeyword,
     IntKeyword,
@@ -43,6 +44,7 @@ namespace Core
     ForKeyword,
     WhileKeyword,
     NewKeyword,
+    ThisKeyword,
     ClassKeyword,
     ReturnKeyword,
   }

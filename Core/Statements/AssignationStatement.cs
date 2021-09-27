@@ -5,17 +5,21 @@ namespace Core.Statements
 {
   public class AssignationStatement : Statement
   {
-    public AssignationStatement(Id id, TypedExpression expression)
+    public AssignationStatement(Id id, TypedExpression expression, bool isAttribute)
     {
       Id = id;
       Expression = expression;
+      IsAttribute = isAttribute;
     }
 
     public Id Id { get; }
     public TypedExpression Expression { get; }
+    public bool IsAttribute { get; }
 
     public override string Generate()
     {
+      if(IsAttribute)
+        return $"this.{Id.Generate()} = {Expression.Generate()}";
       return $"{Id.Generate()} = {Expression.Generate()}";
     }
 

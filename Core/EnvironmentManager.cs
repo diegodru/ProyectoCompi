@@ -10,6 +10,13 @@ namespace Core
     private static List<Environment> _interpretContexts = new List<Environment>();
     private static int _currentIndex = -1;
 
+    public static Environment PushContext(Environment env)
+    {
+      _contexts.Add(env);
+      _interpretContexts.Add(env);
+      return env;
+    }
+
     public static Environment PushContext()
     {
       var env = new Environment();
@@ -22,6 +29,12 @@ namespace Core
     {
       var lastContext = _contexts.Last();
       _contexts.Remove(lastContext);
+      return lastContext;
+    }
+
+    public static Environment TopContext()
+    {
+      var lastContext = _contexts.Last();
       return lastContext;
     }
 
@@ -64,8 +77,9 @@ namespace Core
       }
       throw new ApplicationException($"Symbol {lexeme} doesn't exist in current context");
     }
-    public static void AddClass(string lexeme, Id id) => 
-      _contexts.Last().AddClass(lexeme, id);
+    public static Class AddClass(string lexeme, Id id){
+      return _contexts.Last().AddClass(lexeme, id);
+    }
 
     public static void AddMethod(string lexeme, Id id, BinaryOperator arguments) =>
       _contexts.Last().AddMethod(lexeme, id, arguments);
@@ -118,12 +132,14 @@ namespace Core
       }
     }
 
-    public void AddClass(string lexeme, Id id)
+    public Class AddClass(string lexeme, Id id)
     {
-      if (!_table.TryAdd(lexeme, new Symbol(SymbolType.Class, id, new Class(id))))
+      Class NewClass = new Class(id);
+      if (!_table.TryAdd(lexeme, new Symbol(SymbolType.Class, id, NewClass)))
       {
         throw new ApplicationException($"La Clase {lexeme} ya esta definida");
       }
+      return NewClass;
     }
 
     public Symbol Get(string lexeme)
