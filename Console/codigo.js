@@ -1,6 +1,8 @@
 class lol {
 Constructor(i, hola, adios){
-this.t = i
+this.a = true
+this.t = 10
+
 }
 
 }

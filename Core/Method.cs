@@ -6,11 +6,14 @@ namespace Core.Expressions
   {
     private readonly Dictionary<string, Symbol> _table;
 
-    public Method(Id id)
+    public Method(Id id, Class clase)
     {
       Identifier = id;
+      Class = clase;
     }
     public Id Identifier { get; }
+
+    public Class Class { get; set; }
   }
 }
 

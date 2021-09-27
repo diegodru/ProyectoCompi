@@ -9,7 +9,7 @@ namespace Core.Expressions
     public Class(Id id)
     {
       Identifier = id;
-      Constructor = new Method(id);
+      Constructor = new Method(id, this);
     }
     public Id Identifier { get; }
 

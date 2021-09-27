@@ -65,33 +65,6 @@ namespace test
         Statement statement1, statement2;
         switch (this.lookAhead.TokenType)
         {
-          case TokenType.ThisKeyword:
-            {
-              if(EnvironmentManager.TopContext().GetType() != typeof(Class))
-              {
-                throw new ApplicationException("el keyword this solo se puede usar dentro del contexto de una clase");
-              }
-              Match(TokenType.ThisKeyword);
-              Match(TokenType.Period);
-              var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
-              Match(TokenType.Identifier);
-              if (this.lookAhead.TokenType == TokenType.Assignation)
-              {
-                Console.WriteLine(symbol.Id.Generate());
-                var assStmt = AssignStmt(symbol.Id);
-                Match(TokenType.SemiColon);
-                return assStmt;
-              }
-              else if (this.lookAhead.TokenType == TokenType.Increment || this.lookAhead.TokenType == TokenType.Decrement)
-              {
-                var type = this.lookAhead.TokenType;
-                Move();
-                var incdec = new IncDecStatement(symbol.Id, type, false);
-                Match(TokenType.SemiColon);
-                return incdec;
-              }
-              throw new ApplicationException("No se han implementado los metodos");
-            }
           case TokenType.Identifier:
             {
               var symbol = EnvironmentManager.GetSymbol(this.lookAhead.Lexeme);
@@ -437,19 +410,21 @@ namespace test
 
     private Statement MethodBlock()
     {
-      if(this.lookAhead.TokenType == TokenType.ThisKeyword)
+      switch(this.lookAhead.TokenType)
       {
-        Match(TokenType.ThisKeyword);
-        Match(TokenType.Period);
-        var token = this.lookAhead;
-        Match(TokenType.Identifier);
-        var symbol = EnvironmentManager.GetSymbol(token.Lexeme);
-        var assStmt = AttributeAssignStmt(symbol.Id);
-        Match(TokenType.SemiColon);
-        return assStmt;
+        case TokenType.ThisKeyword:
+          {
+            Match(TokenType.ThisKeyword);
+            Match(TokenType.Period);
+            var token = this.lookAhead;
+            Match(TokenType.Identifier);
+            var symbol = EnvironmentManager.GetSymbol(token.Lexeme);
+            var assStmt = AttributeAssignStmt(symbol.Id);
+            Match(TokenType.SemiColon);
+            return new SequenceStatement(assStmt, MethodBlock());
+          }
       }
-      var block = Block();
-      return block;
+      return null;
     }
 
     private Statement ConstructorStmt(Class Class)
@@ -459,11 +434,11 @@ namespace test
         Match(TokenType.LeftParens);
         EnvironmentManager.PushContext(Class.Constructor);
         var parametros = OptParams();
-        EnvironmentManager.PopContext();
         Match(TokenType.RightParens);
 
         Match(TokenType.OpenBrace);
         var methodblock = MethodBlock();
+        EnvironmentManager.PopContext();
         Match(TokenType.CloseBrace);
 
         return new ConstructorStatement(parametros, methodblock);

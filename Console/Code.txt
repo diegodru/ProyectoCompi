@@ -1,7 +1,9 @@
 class lol{
   int t;
+  bool a;
   lol(int i, bool hola, int adios){
-    this.t = i;
+    this.a = true;
+    this.t = 10;
   }
 }
 lol b;
